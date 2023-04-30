@@ -6,6 +6,7 @@ import dev.themackabu.requests.config.ConfigManager
 import dev.themackabu.requests.config.MessagesManager
 import dev.themackabu.requests.config.ConfigInterface
 import dev.themackabu.requests.utils.Logger
+import dev.themackabu.requests.db.Database
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.conversations.ConversationFactory
@@ -15,16 +16,18 @@ import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.util.logging.Level
+import cafe.adriel.satchel.SatchelStorage
 
 class Main: JavaPlugin() {
     companion object {
         private lateinit var plugin: Plugin
         private lateinit var internal: Toml
 
+        lateinit var db: SatchelStorage
+        lateinit var messages: Toml
         lateinit var conversation: ConversationFactory;
         lateinit var audiences: BukkitAudiences;
         lateinit var config: ConfigInterface
-        lateinit var messages: Toml
         lateinit var messagesManager: MessagesManager
 
         val subCommands: HashMap<String, SubCommandsInterface> = Commands.subCommands
@@ -40,8 +43,13 @@ class Main: JavaPlugin() {
                 override var database = internal.get("database") as HashMap<String, String>
             }
 
+            this.db = Database(if (this.config.database["path"] != null) this.config.database["path"] as String else "tokens.db").init()
             this.messages = ConfigManager(this.plugin, "messages.toml").getConfig()
             this.messagesManager = MessagesManager(this.messages)
+        }
+
+        fun getPlugin(): Plugin {
+            return this.plugin
         }
 
         private fun createConfigs() {

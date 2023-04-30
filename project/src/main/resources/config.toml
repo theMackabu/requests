@@ -3,7 +3,7 @@ salt = "change this"
 prefix = "<light_purple>[requests]<reset> "
 
 [database]
-sqlite = "tokens.db"
+path = "tokens.db"
 
 [api]
 vault = false

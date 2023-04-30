@@ -36,8 +36,10 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-RC")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("net.kyori:adventure-api:4.13.1")
+    implementation("com.github.adrielcafe.satchel:satchel-core:1.0.3")
     implementation("net.kyori:adventure-text-serializer-legacy:4.13.1")
     implementation("net.kyori:adventure-text-serializer-gson:4.13.1")
     implementation("net.kyori:adventure-platform-bukkit:4.3.0")
