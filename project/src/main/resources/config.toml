@@ -1,0 +1,9 @@
+[plugin]
+prefix = "&7[requests]&r "
+
+[database]
+sqlite = "tokens.db"
+
+[api]
+vault = false
+luckperms = false

@@ -1,0 +1,12 @@
+main: "dev.themackabu.requests.Main"
+name: "requests"
+version: "0.1.0"
+description: "HTTP api for your minecraft server"
+author: theMackabu
+api-version: "1.19"
+
+commands:
+    api:
+        usage: /api <command>
+        permission: 'requests.api.use'
+        description: Requests plugin (token/reload) 

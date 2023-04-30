@@ -1,0 +1,7 @@
+.gradle
+.idea
+project/build
+build
+builds
+project-*
+server

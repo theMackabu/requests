@@ -1,0 +1,8 @@
+[commands]
+command-not-found = "&cThe command &b%subcommand% &cdoes not exist!"
+command-usage = "&7Correct usage: &c%usage%"
+use-help-command = "&cUse &b/cmd help &cto see the list of existing commands"
+not-enough-arguments = "&cYou need to enter more arguments to run this command!"
+player-command-only = "&cOnly players can execute this command!"
+no-permission = "&cYou don't have permission to execute this command!"
+reload-successful = "&aPlugin configuration files have been reloaded successfully."
