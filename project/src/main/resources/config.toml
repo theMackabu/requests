@@ -1,5 +1,6 @@
 [plugin]
-prefix = "&7[requests]&r "
+salt = "change this"
+prefix = "<pink>[requests]<reset> "
 
 [database]
 sqlite = "tokens.db"

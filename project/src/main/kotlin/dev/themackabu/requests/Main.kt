@@ -7,6 +7,7 @@ import dev.themackabu.requests.config.MessagesManager
 import dev.themackabu.requests.config.ConfigInterface
 import dev.themackabu.requests.utils.Logger
 
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import de.leonhard.storage.Toml
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -18,11 +19,12 @@ class Main: JavaPlugin() {
         private lateinit var plugin: Plugin
         private lateinit var internal: Toml
 
-        val subCommands: HashMap<String, SubCommandsInterface> = Commands.subCommands
-
+        lateinit var audiences: BukkitAudiences;
         lateinit var config: ConfigInterface
         lateinit var messages: Toml
         lateinit var messagesManager: MessagesManager
+
+        val subCommands: HashMap<String, SubCommandsInterface> = Commands.subCommands
 
         @Suppress("UNCHECKED_CAST")
         fun reloadConfigs() {
@@ -48,6 +50,7 @@ class Main: JavaPlugin() {
 
     override fun onEnable() {
         plugin = this
+        audiences = BukkitAudiences.create(this);
 
         reloadConfigs()
         this.getCommand("api")?.setExecutor(Commands())

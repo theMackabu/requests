@@ -13,6 +13,6 @@ class ReloadSubCommand: SubCommandsInterface {
 
     override fun run(sender: CommandSender, args: Array<out String>) {
         Main.reloadConfigs()
-        sender.sendMessage(Main.messagesManager.getMessage("commands", "reload-successful", null, true))
+        Main.messagesManager.sendMessage(sender, Main.messagesManager.getMessage("commands", "reload-successful", null, true))
     }
 }

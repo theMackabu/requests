@@ -4,6 +4,7 @@ import dev.themackabu.requests.Main
 import dev.themackabu.requests.config.MessagesManager
 import dev.themackabu.requests.cmd.subCommands.HelpSubCommand
 import dev.themackabu.requests.cmd.subCommands.ReloadSubCommand
+import dev.themackabu.requests.cmd.subCommands.TokenSubCommand
 import dev.themackabu.requests.cmd.subCommands.SubCommandsInterface
 import org.bukkit.command.*
 
@@ -11,7 +12,8 @@ class Commands: CommandExecutor, TabCompleter {
     companion object {
         val subCommands: HashMap<String, SubCommandsInterface> = hashMapOf(
             "help" to HelpSubCommand(),
-            "reload" to ReloadSubCommand()
+            "reload" to ReloadSubCommand(),
+            "token" to TokenSubCommand()
         )
     }
 
@@ -19,16 +21,16 @@ class Commands: CommandExecutor, TabCompleter {
         val messagesManager: MessagesManager = Main.messagesManager
 
         if (args.isEmpty()) {
-            sender.sendMessage(messagesManager.getMessage("commands", "not-enough-arguments", null, true))
-            sender.sendMessage(messagesManager.getMessage("commands", "use-help-command", null, true))
+            Main.messagesManager.sendMessage(sender, messagesManager.getMessage("commands", "not-enough-arguments", null, true))
+            Main.messagesManager.sendMessage(sender, messagesManager.getMessage("commands", "use-help-command", null, true))
             return true
         }
 
         val placeholders = hashMapOf("%subcommand%" to args[0])
 
         if (!subCommands.containsKey(args[0])) {
-            sender.sendMessage(messagesManager.getMessage("commands", "command-not-found", placeholders, true))
-            sender.sendMessage(messagesManager.getMessage("commands", "use-help-command", placeholders, true))
+            Main.messagesManager.sendMessage(sender, messagesManager.getMessage("commands", "command-not-found", placeholders, true))
+            Main.messagesManager.sendMessage(sender, messagesManager.getMessage("commands", "use-help-command", placeholders, true))
             return true
         }
 
@@ -38,18 +40,18 @@ class Commands: CommandExecutor, TabCompleter {
         placeholders["%minArguments%"] = subCommand.minArguments.toString()
 
         if (!sender.hasPermission("plugin.admin") && (subCommand.neededPermission != null && !sender.hasPermission(subCommand.neededPermission!!))) {
-            sender.sendMessage(messagesManager.getMessage("commands", "no-permission", placeholders, true))
+            Main.messagesManager.sendMessage(sender, messagesManager.getMessage("commands", "no-permission", placeholders, true))
             return true
         }
 
         if (sender is ConsoleCommandSender && !subCommand.executableByConsole) {
-            sender.sendMessage(messagesManager.getMessage("commands", "player-command-only", placeholders, true))
+            Main.messagesManager.sendMessage(sender, messagesManager.getMessage("commands", "player-command-only", placeholders, true))
             return true
         }
 
         if (args.size - 1 < subCommand.minArguments) {
-            sender.sendMessage(messagesManager.getMessage("commands", "not-enough-arguments", placeholders, true))
-            sender.sendMessage(messagesManager.getMessage("commands", "command-usage", placeholders, true))
+            Main.messagesManager.sendMessage(sender, messagesManager.getMessage("commands", "not-enough-arguments", placeholders, true))
+            Main.messagesManager.sendMessage(sender, messagesManager.getMessage("commands", "command-usage", placeholders, true))
             return true
         }
 
