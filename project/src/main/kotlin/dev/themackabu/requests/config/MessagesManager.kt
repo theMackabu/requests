@@ -3,6 +3,7 @@ package dev.themackabu.requests.config
 import dev.themackabu.requests.Main
 import dev.themackabu.requests.utils.Logger
 import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.command.CommandSender
 import net.kyori.adventure.text.Component
 import de.leonhard.storage.Toml
@@ -30,8 +31,8 @@ class MessagesManager(config: Toml) {
         return mm.deserialize(message);
     }
 
-    fun sendMessage(sender: CommandSender, message: Component) {
-        Main.audiences.sender(sender).sendMessage(message);
+    fun sendMessage(sender: CommandSender, textComponent: Component) {
+        Main.audiences.sender(sender).sendMessage(textComponent);
     }
 
     private fun replacePlaceholders(message: String, placeholders: HashMap<String, String>): String {

@@ -47,17 +47,15 @@ class TokenSubCommand: SubCommandsInterface {
 
                 Main.messagesManager.sendMessage(sender, message)
             } else {
-                val audience = Main.audiences.sender(sender);
                 val placeholders: HashMap<String, String> = hashMapOf("%token%" to "console_token")
 
-                audience.sendMessage(Main.messagesManager.getMessage("commands", "console-generate-token", placeholders, true))
+                Main.messagesManager.sendMessage(sender, Main.messagesManager.getMessage("commands", "console-generate-token", placeholders, true))
             }
         } else {
-            val audience = Main.audiences.sender(sender);
             var placeholders: HashMap<String, String> = hashMapOf("%argument%" to args[1], "%usage%" to usage)
 
-            audience.sendMessage(Main.messagesManager.getMessage("commands", "invalid-arguments", placeholders, true))
-            audience.sendMessage(Main.messagesManager.getMessage("commands", "command-usage", placeholders, true))
+            Main.messagesManager.sendMessage(sender, Main.messagesManager.getMessage("commands", "invalid-arguments", placeholders, true))
+            Main.messagesManager.sendMessage(sender, Main.messagesManager.getMessage("commands", "command-usage", placeholders, true))
         }
     }
 

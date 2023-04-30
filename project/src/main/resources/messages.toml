@@ -1,5 +1,5 @@
 [commands]
-generate-token = """<green>Your new API key is <cyan>%token% <hover:show_text:"<gold>Click here to copy to your clipboard."><grey>(Click here to copy)"""
+generate-token = "<green>Your new API key is <aqua>%token% <click:copy_to_clipboard:%token%><hover:show_text:'<gold>Click here to copy to your clipboard.'><grey>(Click here to copy)</grey></hover></click>"
 console-generate-token = "<grey>New server API key generated: '<gold>%token%<grey>'"
 command-not-found = "<red>The command <gold>%subcommand% <red>does not exist!"
 command-usage = "<grey>Correct usage: <gold>%usage%"

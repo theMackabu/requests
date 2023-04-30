@@ -1,6 +1,6 @@
 [plugin]
 salt = "change this"
-prefix = "<pink>[requests]<reset> "
+prefix = "<light_purple>[requests]<reset> "
 
 [database]
 sqlite = "tokens.db"
