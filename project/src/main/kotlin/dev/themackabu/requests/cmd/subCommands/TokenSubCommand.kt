@@ -1,19 +1,18 @@
 package dev.themackabu.requests.cmd.subCommands
 
-import java.util.Base64
-import com.google.gson.Gson
-import com.aventrix.jnanoid.jnanoid.NanoIdUtils
 import dev.themackabu.requests.Main
 import dev.themackabu.requests.db.UserInterface
+
+import java.util.Scanner
+import java.util.Base64
+import java.security.SecureRandom;
+import com.google.gson.Gson
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.ChatColor
-
-//import net.md_5.bungee.api.chat.hover.content.Text
-//import net.md_5.bungee.api.chat.TextComponent
-//import net.md_5.bungee.api.chat.HoverEvent
-//import net.md_5.bungee.api.chat.ClickEvent
-//import net.md_5.bungee.api.chat.ComponentBuilder
+import org.bukkit.Bukkit
+import org.bukkit.conversations.ConversationContext
+import org.bukkit.conversations.Prompt
 
 class TokenSubCommand: SubCommandsInterface {
     override val name: String = "token"
@@ -35,27 +34,61 @@ class TokenSubCommand: SubCommandsInterface {
                     override var token = NanoIdUtils.randomNanoId()
                 }
 
-                val encodedToken = Base64.getEncoder().encodeToString(gson.toJson(token).toByteArray())
+                val prompt = object: Prompt {
+                    override fun getPromptText(context: ConversationContext): String { return Main.messagesManager.toLegacyString(Main.messagesManager.getMessage("commands", "action-destructive", hashMapOf("%action%" to "generate a new token"), addPrefix = true)) }
+                    override fun blocksForInput(context: ConversationContext): Boolean { return true }
+                    override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
+                        if (input.equals("y", ignoreCase = true)) {
+                            val encodedToken = Base64.getEncoder().encodeToString(gson.toJson(token).toByteArray())
+                            val message = Main.messagesManager.getMessage(
+                                "commands", "generate-token",
+                                hashMapOf("%token%" to encodedToken),
+                                addPrefix = false
+                            )
 
-                val message = Main.messagesManager.getMessage(
-                    "commands", "generate-token",
-                    hashMapOf("%token%" to encodedToken),
-                    true
-                )
+                            Main.messagesManager.sendMessage(sender, message)
 
-                println(player.getName().toByteArray())
+                        } else { Main.messagesManager.send(sender, "\n<grey>Aborting...") }
 
-                Main.messagesManager.sendMessage(sender, message)
+                        return null
+                    }
+                }
+
+                Main.conversation.withFirstPrompt(prompt)
+                    .withLocalEcho(false)
+                    .withTimeout(30)
+                    .withEscapeSequence("cancel")
+                    .buildConversation(player)
+                    .begin()
             } else {
-                val placeholders: HashMap<String, String> = hashMapOf("%token%" to "console_token")
+                val consoleSender = Bukkit.getConsoleSender()
+                val chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()
+                val placeholders: HashMap<String, String> = hashMapOf("%token%" to NanoIdUtils.randomNanoId(SecureRandom(), chars, 35))
 
-                Main.messagesManager.sendMessage(sender, Main.messagesManager.getMessage("commands", "console-generate-token", placeholders, true))
+                val prompt = object: Prompt {
+                    override fun getPromptText(context: ConversationContext): String { return Main.messagesManager.toLegacyString(Main.messagesManager.getMessage("commands", "action-destructive", hashMapOf("%action%" to "generate a new master token"), addPrefix = false)) }
+                    override fun blocksForInput(context: ConversationContext): Boolean { return true }
+                    override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
+                        if (input.equals("y", ignoreCase = true)) {
+                            Main.messagesManager.sendMessage(sender, Main.messagesManager.getMessage("commands", "console-generate-token", placeholders, addPrefix = false))
+                        } else { Main.messagesManager.send(sender, "<grey>Aborting...") }
+
+                        return null
+                    }
+                }
+
+                Main.conversation.withFirstPrompt(prompt)
+                    .withLocalEcho(false)
+                    .withTimeout(30)
+                    .withEscapeSequence("cancel")
+                    .buildConversation(consoleSender)
+                    .begin()
             }
         } else {
             var placeholders: HashMap<String, String> = hashMapOf("%argument%" to args[1], "%usage%" to usage)
 
-            Main.messagesManager.sendMessage(sender, Main.messagesManager.getMessage("commands", "invalid-arguments", placeholders, true))
-            Main.messagesManager.sendMessage(sender, Main.messagesManager.getMessage("commands", "command-usage", placeholders, true))
+            Main.messagesManager.sendMessage(sender, Main.messagesManager.getMessage("commands", "invalid-arguments", placeholders, addPrefix = true))
+            Main.messagesManager.sendMessage(sender, Main.messagesManager.getMessage("commands", "command-usage", placeholders, addPrefix = true))
         }
     }
 

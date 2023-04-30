@@ -19,9 +19,7 @@ if (pluginAPIVersion.isEmpty()) {
 }
 
 plugins {
-    // id("io.papermc.paperweight.userdev") version "1.5.3" *NMS
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    // id("org.jlleitschuh.gradle.ktlint") version "11.3.1"
     kotlin("jvm") version "1.8.21"
     application
     java
@@ -40,6 +38,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("net.kyori:adventure-api:4.13.1")
+    implementation("net.kyori:adventure-text-serializer-legacy:4.13.1")
     implementation("net.kyori:adventure-text-serializer-gson:4.13.1")
     implementation("net.kyori:adventure-platform-bukkit:4.3.0")
     implementation("net.kyori:adventure-text-minimessage:4.13.1")
@@ -48,7 +47,6 @@ dependencies {
     implementation("com.github.simplix-softworks:simplixstorage:3.2.5")
     compileOnly(group = "me.clip", name = "placeholderapi", version = "2.11.1")
     compileOnly("io.papermc.paper:paper-api:$pluginAPIVersion-R0.1-SNAPSHOT")
-    // paperweight.paperDevBundle("$pluginAPIVersion-R0.1-SNAPSHOT") *NMS
 
     val dependenciesFolder = File("${projectDir.absolutePath}/dependencies")
     dependenciesFolder.listFiles()?.filter { it.absolutePath.endsWith(".jar") }?.forEach {

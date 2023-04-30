@@ -1,5 +1,7 @@
 [commands]
-generate-token = "<green>Your new API key is <aqua>%token% <click:copy_to_clipboard:%token%><hover:show_text:'<gold>Click here to copy to your clipboard.'><grey>(Click here to copy)</grey></hover></click>"
+action-destructive = "<red>\nThis is a potentally destructive action!\nAre you sure you want to %action%? <grey>(y/n)"
+action-warning = "<red>Are you sure you want to %action%<red>? <grey>(y/n)"
+generate-token = "<green>Generated new API token <click:copy_to_clipboard:%token%><hover:show_text:'<aqua>%token%'><grey>(Click here to copy)</grey></hover></click>"
 console-generate-token = "<grey>New server API key generated: '<gold>%token%<grey>'"
 command-not-found = "<red>The command <gold>%subcommand% <red>does not exist!"
 command-usage = "<grey>Correct usage: <gold>%usage%"

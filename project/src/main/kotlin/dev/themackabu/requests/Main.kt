@@ -8,6 +8,8 @@ import dev.themackabu.requests.config.ConfigInterface
 import dev.themackabu.requests.utils.Logger
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bukkit.conversations.ConversationFactory
+import org.bukkit.conversations.ConversationPrefix
 import de.leonhard.storage.Toml
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -19,6 +21,7 @@ class Main: JavaPlugin() {
         private lateinit var plugin: Plugin
         private lateinit var internal: Toml
 
+        lateinit var conversation: ConversationFactory;
         lateinit var audiences: BukkitAudiences;
         lateinit var config: ConfigInterface
         lateinit var messages: Toml
@@ -50,7 +53,8 @@ class Main: JavaPlugin() {
 
     override fun onEnable() {
         plugin = this
-        audiences = BukkitAudiences.create(this);
+        audiences = BukkitAudiences.create(this)
+        conversation = ConversationFactory(this)
 
         reloadConfigs()
         this.getCommand("api")?.setExecutor(Commands())
