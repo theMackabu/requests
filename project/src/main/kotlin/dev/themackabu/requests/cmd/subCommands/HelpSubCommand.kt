@@ -2,6 +2,7 @@ package dev.themackabu.requests.cmd.subCommands
 
 import dev.themackabu.requests.Main
 import org.bukkit.command.CommandSender
+import dev.themackabu.requests.models.SubCommandsInterface
 
 class HelpSubCommand: SubCommandsInterface {
     override val name: String = "help"

@@ -1,8 +1,9 @@
 package dev.themackabu.requests.cmd.subCommands
 
 import dev.themackabu.requests.Main
-import dev.themackabu.requests.db.UserInterface
 import dev.themackabu.requests.db.Database
+import dev.themackabu.requests.models.UserInterface
+import dev.themackabu.requests.models.SubCommandsInterface
 
 import java.util.Scanner
 import java.util.Base64

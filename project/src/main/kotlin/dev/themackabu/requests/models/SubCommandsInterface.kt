@@ -1,4 +1,4 @@
-package dev.themackabu.requests.cmd.subCommands
+package dev.themackabu.requests.models
 
 import org.bukkit.command.CommandSender
 

@@ -5,7 +5,7 @@ import dev.themackabu.requests.config.MessagesManager
 import dev.themackabu.requests.cmd.subCommands.HelpSubCommand
 import dev.themackabu.requests.cmd.subCommands.ReloadSubCommand
 import dev.themackabu.requests.cmd.subCommands.TokenSubCommand
-import dev.themackabu.requests.cmd.subCommands.SubCommandsInterface
+import dev.themackabu.requests.models.SubCommandsInterface
 import org.bukkit.command.*
 
 class Commands: CommandExecutor, TabCompleter {

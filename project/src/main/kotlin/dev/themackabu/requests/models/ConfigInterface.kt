@@ -1,4 +1,4 @@
-package dev.themackabu.requests.config
+package dev.themackabu.requests.models
 
 interface ConfigInterface {
     val api: HashMap<String, String>

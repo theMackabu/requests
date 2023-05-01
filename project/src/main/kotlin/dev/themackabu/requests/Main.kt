@@ -1,10 +1,10 @@
 package dev.themackabu.requests
 
 import dev.themackabu.requests.cmd.Commands
-import dev.themackabu.requests.cmd.subCommands.SubCommandsInterface
+import dev.themackabu.requests.models.SubCommandsInterface
 import dev.themackabu.requests.config.ConfigManager
 import dev.themackabu.requests.config.MessagesManager
-import dev.themackabu.requests.config.ConfigInterface
+import dev.themackabu.requests.models.ConfigInterface
 import dev.themackabu.requests.utils.PlayerDataListener
 import dev.themackabu.requests.utils.Logger
 import dev.themackabu.requests.db.Database

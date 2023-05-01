@@ -1,4 +1,4 @@
-package dev.themackabu.requests.db
+package dev.themackabu.requests.models
 
 interface UserInterface {
     val name: String

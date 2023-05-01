@@ -1,4 +1,4 @@
-package dev.themackabu.requests.api
+package dev.themackabu.requests.models
 
 interface PlayerInterface {
     val uuid: String

@@ -3,8 +3,9 @@ package dev.themackabu.requests.api
 import dev.themackabu.requests.Main
 import dev.themackabu.requests.utils.Logger
 import dev.themackabu.requests.api.FileLogger
-import dev.themackabu.requests.api.Player
-import dev.themackabu.requests.api.PlayerInterface
+import dev.themackabu.requests.models.ErrorModel
+import dev.themackabu.requests.models.Player
+import dev.themackabu.requests.models.PlayerInterface
 
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.defaultheaders.*
@@ -52,9 +53,17 @@ class Api(port: Int) {
             routing {
                 get("/player/{uuid}") {
                     val uuid = call.parameters["uuid"]
-                    val json = getPlayer(uuid as String)
-
-                    call.respond(json)
+                    try {
+                        val json = getPlayer(uuid as String)
+                        call.respond(json)
+                    } catch (e: NullPointerException) {
+                        call.response.status(HttpStatusCode.NotFound)
+                        call.respond(object: ErrorModel {
+                            override var code = 404
+                            override var error = "player.not_found"
+                            override var message = "The player $uuid could not be found."
+                        })
+                    }
                 }
             }
         }

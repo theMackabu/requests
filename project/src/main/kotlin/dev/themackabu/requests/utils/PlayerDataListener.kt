@@ -1,7 +1,7 @@
 package dev.themackabu.requests.utils
 
-import dev.themackabu.requests.api.PlayerStatus
-import dev.themackabu.requests.api.PlayerInterface
+import dev.themackabu.requests.models.PlayerStatus
+import dev.themackabu.requests.models.PlayerInterface
 import dev.themackabu.requests.utils.getExpTotal
 import dev.themackabu.requests.Main
 
