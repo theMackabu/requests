@@ -8,7 +8,6 @@ import cafe.adriel.satchel.storer.file.FileSatchelStorer
 import cafe.adriel.satchel.encrypter.bypass.BypassSatchelEncrypter
 import cafe.adriel.satchel.serializer.raw.RawSatchelSerializer
 
-
 class Database(path: String) {
     private lateinit var db: SatchelStorage
     private var path: String

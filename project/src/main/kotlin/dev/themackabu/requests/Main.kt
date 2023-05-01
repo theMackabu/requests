@@ -5,13 +5,16 @@ import dev.themackabu.requests.cmd.subCommands.SubCommandsInterface
 import dev.themackabu.requests.config.ConfigManager
 import dev.themackabu.requests.config.MessagesManager
 import dev.themackabu.requests.config.ConfigInterface
+import dev.themackabu.requests.utils.PlayerDataListener
 import dev.themackabu.requests.utils.Logger
 import dev.themackabu.requests.db.Database
+import dev.themackabu.requests.api.Api
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.conversations.ConversationFactory
 import org.bukkit.conversations.ConversationPrefix
 import de.leonhard.storage.Toml
+import io.ktor.server.netty.*
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -22,9 +25,12 @@ class Main: JavaPlugin() {
     companion object {
         private lateinit var plugin: Plugin
         private lateinit var internal: Toml
+        private var port: Int = 5000
 
         lateinit var db: SatchelStorage
+        lateinit var players: SatchelStorage
         lateinit var messages: Toml
+        lateinit var api: NettyApplicationEngine;
         lateinit var conversation: ConversationFactory;
         lateinit var audiences: BukkitAudiences;
         lateinit var config: ConfigInterface
@@ -43,7 +49,9 @@ class Main: JavaPlugin() {
                 override var database = internal.get("database") as HashMap<String, String>
             }
 
-            this.db = Database(if (this.config.database["path"] != null) this.config.database["path"] as String else "tokens.db").init()
+            this.port = if (this.config.database["port"] != null) (this.config.api["port"] as String).toInt() else 5000
+            this.db = Database(if (this.config.database["tokens"] != null) this.config.database["tokens"] as String else "tokens.db").init()
+            this.players = Database(if (this.config.database["players"] != null) this.config.database["players"] as String else "players.db").init()
             this.messages = ConfigManager(this.plugin, "messages.toml").getConfig()
             this.messagesManager = MessagesManager(this.messages)
         }
@@ -54,6 +62,10 @@ class Main: JavaPlugin() {
 
         private fun createConfigs() {
             var dataFolder: String = plugin.dataFolder.absolutePath + File.separator
+            val logs = File("${dataFolder}log${File.separator}api.log")
+            logs.getParentFile().mkdirs()
+
+            if (!File("${dataFolder}log${File.separator}api.log").exists()) logs.createNewFile()
             if (!File("${dataFolder}config.toml").exists()) plugin.saveResource("config.toml", false)
             if (!File("${dataFolder}messages.toml").exists()) plugin.saveResource("messages.toml", false)
         }
@@ -61,17 +73,20 @@ class Main: JavaPlugin() {
 
     override fun onEnable() {
         plugin = this
+        api = Api(port).start()
         audiences = BukkitAudiences.create(this)
         conversation = ConversationFactory(this)
 
         reloadConfigs()
         this.getCommand("api")?.setExecutor(Commands())
         this.getCommand("api")?.tabCompleter = Commands()
+        getServer().getPluginManager().registerEvents(PlayerDataListener(), this)
 
         Logger.log(Level.INFO, "plugin enabled.")
     }
 
     override fun onDisable() {
+        api.stop(0, 0)
         Logger.log(Level.INFO, "plugin disabled.")
     }
 }

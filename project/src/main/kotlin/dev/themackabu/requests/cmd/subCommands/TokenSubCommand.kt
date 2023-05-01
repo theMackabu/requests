@@ -16,6 +16,14 @@ import java.io.File
 import org.bukkit.conversations.ConversationContext
 import org.bukkit.conversations.Prompt
 
+fun generateToken(player: Player): UserInterface {
+    return object: UserInterface {
+        override var name = player.getName()
+        override var uuid = player.getUniqueId().toString()
+        override var token = NanoIdUtils.randomNanoId()
+    }
+}
+
 class TokenSubCommand: SubCommandsInterface {
     override val name: String = "token"
     override val description: String = "Creates a new token to use the api"
@@ -31,14 +39,9 @@ class TokenSubCommand: SubCommandsInterface {
                 is Player -> {
                     var gson = Gson()
                     val player: Player = sender
-
-                    val token = object: UserInterface {
-                        override var name = player.getName()
-                        override var uuid = player.getUniqueId().toString()
-                        override var token = NanoIdUtils.randomNanoId()
-                    }
-
+                    val token = generateToken(player)
                     val encodedToken = Base64.getEncoder().encodeToString(gson.toJson(token).toByteArray())
+
                     val message = Main.messagesManager.getMessage(
                         "commands", "generate-token",
                         hashMapOf("%token%" to encodedToken),
@@ -48,13 +51,13 @@ class TokenSubCommand: SubCommandsInterface {
                     val prompt = object: Prompt {
                         override fun blocksForInput(context: ConversationContext): Boolean { return true }
                         override fun getPromptText(context: ConversationContext): String {
-                            return Main.messagesManager.toLegacyString(Main.messagesManager.getMessage("commands", "action-destructive", hashMapOf("%action%" to "generate a new token"), addPrefix = true))
+                            return Main.messagesManager.toLegacyString(Main.messagesManager.getMessage("commands", "action-destructive", hashMapOf("%action%" to "generate a new token"), addPrefix = false))
                         }
                         override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
                             if (input.equals("y", ignoreCase = true) || input.equals("yes", ignoreCase = true)) {
                                 Main.messagesManager.sendMessage(sender, message)
                                 db.apply { set(player.getUniqueId().toString(), encodedToken) }
-                            } else { Main.messagesManager.send(sender, "\n<grey>Aborting...") }
+                            } else { Main.messagesManager.send(sender, "<grey>Aborting...") }
                             return null
                         }
                     }
@@ -83,7 +86,7 @@ class TokenSubCommand: SubCommandsInterface {
                     val message = Main.messagesManager.getMessage("commands", "console-generate-token", placeholders, addPrefix = false)
 
                     val prompt = object: Prompt {
-                        override fun getPromptText(context: ConversationContext): String { return Main.messagesManager.toLegacyString(Main.messagesManager.getMessage("commands", "action-destructive", hashMapOf("%action%" to "generate a new master token"), addPrefix = false)) }
+                        override fun getPromptText(context: ConversationContext): String { return "\n" + Main.messagesManager.toLegacyString(Main.messagesManager.getMessage("commands", "action-destructive", hashMapOf("%action%" to "generate a new master token"), addPrefix = false)) }
                         override fun blocksForInput(context: ConversationContext): Boolean { return true }
                         override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
                             if (input.equals("y", ignoreCase = true) || input.equals("yes", ignoreCase = true)) {

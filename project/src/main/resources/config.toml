@@ -3,8 +3,10 @@ salt = "change this"
 prefix = "<light_purple>[requests]<reset> "
 
 [database]
-path = "tokens.db"
+tokens = "tokens.db"
+players = "players.db"
 
 [api]
+port = 5000
 vault = false
 luckperms = false

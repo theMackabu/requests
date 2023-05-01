@@ -1,5 +1,5 @@
 [commands]
-action-destructive = "<red>\nThis is a potentally destructive action!\nAre you sure you want to %action%? <grey>(y/n)"
+action-destructive = "<red>This is a potentally destructive action!\nAre you sure you want to %action%? <grey>(y/n)"
 action-warning = "<red>Are you sure you want to %action%<red>? <grey>(y/n)"
 generate-token = "<green>Generated new API token <click:copy_to_clipboard:%token%><hover:show_text:'<aqua>%token%'><grey>(Click here to copy)</grey></hover></click>"
 console-generate-token = "<grey>New server API key generated: '<gold>%token%<grey>'"
