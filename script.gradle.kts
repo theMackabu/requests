@@ -45,14 +45,10 @@ open class MultiVersionPlugin: DefaultTask() {
                         newContent = content.replace(Regex("(fun javaVersion\\(\\) *= *)\"[0-9]+\""), "$1 \"17\"")
                     } else if (version == "1.17") {
                         newContent =
-                            content
-                                .replace("io.papermc.paper", "com.destroystokyo.paper")
-                                .replace(Regex("(fun javaVersion\\(\\) *= *)\"[0-9]+\""), "$1 \"16\"")
+                            content.replace(Regex("(fun javaVersion\\(\\) *= *)\"[0-9]+\""), "$1 \"16\"")
                     } else if (version == "1.16") {
                         newContent =
-                            content
-                                .replace("io.papermc.paper", "com.destroystokyo.paper")
-                                .replace(Regex("(fun javaVersion\\(\\) *= *)\"[0-9]+\""), "$1 \"11\"")
+                            content.replace(Regex("(fun javaVersion\\(\\) *= *)\"[0-9]+\""), "$1 \"11\"")
                     } else if (version == "1.15") {
                         newContent =
                             content
