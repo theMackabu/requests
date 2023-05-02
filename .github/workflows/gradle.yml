@@ -18,14 +18,12 @@ jobs:
           distribution: 'corretto'
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
-      - name: Update Permissions
-        run: chmod +x ./gradlew
       - name: Create Multi Version Plugin
-        run: ./gradlew multiVersionPlugin
+        run: gradle multiVersionPlugin
       - name: Build with Gradle
-        run: ./gradlew shadowJar
+        run: gradle shadowJar
       - name: Move Builds
-        run: ./gradlew -p project moveBuilds
+        run: gradle -p project moveBuilds
       - uses: actions/upload-artifact@v3
         with:
           name: Package
