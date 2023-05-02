@@ -15,7 +15,7 @@ File("${projectDir.absoluteFile}/src/main/resources/plugin.yml").forEachLine { l
     }
 }
 if (pluginAPIVersion.isEmpty()) {
-    pluginAPIVersion = "1.16.4"
+    pluginAPIVersion = "1.19"
 }
 
 plugins {
@@ -89,7 +89,6 @@ tasks.withType<Jar> {
     manifest {
         attributes["Main-Class"] = pluginMainClass
     }
-    // dependsOn("ktlintFormat")
 }
 
 tasks.withType<ShadowJar> {
