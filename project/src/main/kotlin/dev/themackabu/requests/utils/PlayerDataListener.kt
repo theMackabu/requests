@@ -1,16 +1,18 @@
 package dev.themackabu.requests.utils
 
-import dev.themackabu.requests.models.PlayerStatus
-import dev.themackabu.requests.models.PlayerInterface
-import dev.themackabu.requests.utils.getExpTotal
 import dev.themackabu.requests.Main
+import dev.themackabu.requests.utils.getExpTotal
+import dev.themackabu.requests.models.api.PlayerInfo
+import dev.themackabu.requests.models.api.PlayerStatus
+import dev.themackabu.requests.models.api.PlayerHealth
 
 import java.util.UUID
 import com.google.gson.Gson
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.EventHandler
+import org.bukkit.attribute.Attribute
 import org.bukkit.scheduler.BukkitTask
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -28,15 +30,23 @@ private val interactDebounce = mutableMapOf<UUID, BukkitTask?>()
 
 fun updatePlayer(player: Player) {
     val uuid = player.getUniqueId().toString()
-    val json = gson.toJson(object: PlayerInterface {
-        override var uuid = uuid
-        override var username = player.getName()
-        override var level = getExpTotal(player)
-        override var allowFlight = player.getAllowFlight()
-        override var status = object: PlayerStatus {
-            override var online = player.isOnline()
-        }
-    })
+    val maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.getValue()
+
+    val json = gson.toJson(PlayerInfo(
+        uuid = uuid,
+        username = player.getName(),
+        level = getExpTotal(player),
+        allowFlight = player.getAllowFlight(),
+        health = PlayerHealth(
+            max = maxHealth,
+            current = player.getHealth(),
+            percent = player.getHealth() / maxHealth as Double,
+            absorption = player.getAbsorptionAmount()
+        ),
+        status = PlayerStatus(
+            online = player.isOnline()
+        )
+    ))
 
     println("[DEBUG] event.update.player")
     db.apply { set("players.$uuid", json) }

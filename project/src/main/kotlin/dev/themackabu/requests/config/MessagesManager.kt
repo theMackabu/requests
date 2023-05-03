@@ -9,7 +9,6 @@ import org.bukkit.command.CommandSender
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 import de.leonhard.storage.Toml
-import java.util.logging.Level
 import org.bukkit.ChatColor
 
 class MessagesManager(config: Toml) {
@@ -23,7 +22,7 @@ class MessagesManager(config: Toml) {
         var mm = MiniMessage.miniMessage();
 
         if (message.isNullOrEmpty()) {
-            Logger.log(Level.SEVERE, "The key $key was not found in your language file. Try to delete the file and generate it again to solve this issue.")
+            Logger.log("SEVERE", "The key $key was not found in your language file. Try to delete the file and generate it again to solve this issue.")
             return mm.deserialize("<dark_red>[FATAL]<red>Language keys are missing. Contact the server owner to resolve.");
         }
 

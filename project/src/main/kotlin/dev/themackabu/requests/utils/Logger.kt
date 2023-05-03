@@ -5,8 +5,8 @@ import java.util.logging.Level
 
 class Logger {
     companion object {
-        fun log(level: Level, message: String) {
-            Bukkit.getLogger().log(level, "[requests] $message")
+        fun log(level: String, message: String) {
+            Bukkit.getLogger().log(Level.parse(level), "[requests] $message")
         }
     }
 }

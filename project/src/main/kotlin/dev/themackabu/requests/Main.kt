@@ -82,11 +82,11 @@ class Main: JavaPlugin() {
         this.getCommand("api")?.tabCompleter = Commands()
         getServer().getPluginManager().registerEvents(PlayerDataListener(), this)
 
-        Logger.log(Level.INFO, "plugin enabled.")
+        Logger.log("INFO", "plugin enabled.")
     }
 
     override fun onDisable() {
         api.stop(0, 0)
-        Logger.log(Level.INFO, "plugin disabled.")
+        Logger.log("INFO", "plugin disabled.")
     }
 }

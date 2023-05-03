@@ -26,5 +26,5 @@ jobs:
         run: gradle -p project moveBuilds
       - uses: actions/upload-artifact@v3
         with:
-          name: Package
+          name: build_jar_(1.13-1.19)
           path: builds

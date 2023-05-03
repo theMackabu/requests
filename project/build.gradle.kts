@@ -20,6 +20,7 @@ if (pluginAPIVersion.isEmpty()) {
 
 plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
     kotlin("jvm") version "1.8.21"
     application
     java
@@ -38,10 +39,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.0")
     implementation("ch.qos.logback:logback-classic:1.4.6")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-RC")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("net.kyori:adventure-api:4.13.1")
     implementation("io.ktor:ktor-server-content-negotiation-jvm:2.3.0")
     implementation("io.ktor:ktor-serialization-gson-jvm:2.3.0")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.0")
     implementation("io.ktor:ktor-server-core-jvm:2.3.0")
     implementation("io.ktor:ktor-server-double-receive-jvm:2.3.0")
     implementation("io.ktor:ktor-server-cors-jvm:2.3.0")
