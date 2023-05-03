@@ -11,8 +11,6 @@ import dev.themackabu.requests.models.SubCommandsInterface
 import dev.themackabu.requests.helpers.player.dataListener
 
 import org.bukkit.Bukkit
-import org.slf4j.LoggerFactory
-import ch.qos.logback.classic.Level
 import org.bukkit.plugin.java.JavaPlugin
 import cafe.adriel.satchel.SatchelStorage
 import org.bukkit.conversations.ConversationPrefix
@@ -56,10 +54,6 @@ fun loadPlugin(internal: JavaPlugin) {
 
 class Main: JavaPlugin() {
     override fun onEnable() {
-        /* disable logback */
-        val logger = LoggerFactory.getLogger("ktor.application")
-        (logger as? ch.qos.logback.classic.Logger)?.level = Level.OFF
-
         /* main services */
         loadPlugin(this)
 

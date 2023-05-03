@@ -18,13 +18,9 @@ jobs:
           distribution: 'corretto'
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
-      - name: Create Multi Version Plugin
-        run: gradle multiVersionPlugin
       - name: Build with Gradle
         run: gradle shadowJar
-      - name: Move Builds
-        run: gradle -p project moveBuilds
       - uses: actions/upload-artifact@v3
         with:
-          name: build_jar_(1.13-1.19)
-          path: builds
+          name: built_jars
+          path: project/build/libs

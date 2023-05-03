@@ -26,8 +26,6 @@ plugins {
     java
 }
 
-apply(from = "../script.gradle.kts")
-
 repositories {
     mavenCentral()
     maven("https://jitpack.io")
@@ -37,11 +35,8 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.0")
-    implementation("ch.qos.logback:logback-classic:1.4.6")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("net.kyori:adventure-api:4.13.1")
     implementation("io.ktor:ktor-server-content-negotiation-jvm:2.3.0")
     implementation("io.ktor:ktor-serialization-gson-jvm:2.3.0")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.0")
@@ -49,18 +44,12 @@ dependencies {
     implementation("io.ktor:ktor-server-double-receive-jvm:2.3.0")
     implementation("io.ktor:ktor-server-cors-jvm:2.3.0")
     implementation("io.ktor:ktor-server-netty-jvm:2.3.0")
+    implementation("io.ktor:ktor-server-auth-jvm:2.3.0")
     implementation("io.ktor:ktor-server-status-pages-jvm:2.3.0")
     implementation("io.ktor:ktor-server-default-headers-jvm:2.3.0")
-    implementation("com.fasterxml.jackson.core:jackson-core:2.12.5")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.12.5")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
     implementation("com.github.adrielcafe.satchel:satchel-core:1.0.3")
-    implementation("net.kyori:adventure-text-serializer-legacy:4.13.1")
-    implementation("net.kyori:adventure-text-serializer-gson:4.13.1")
     implementation("net.kyori:adventure-platform-bukkit:4.3.0")
-    implementation("net.kyori:adventure-text-minimessage:4.13.1")
     implementation("com.aventrix.jnanoid:jnanoid:2.0.0")
-    implementation("com.moandjiezana.toml:toml4j:0.7.2")
     implementation("com.github.simplix-softworks:simplixstorage:3.2.5")
     compileOnly(group = "me.clip", name = "placeholderapi", version = "2.11.1")
     compileOnly("io.papermc.paper:paper-api:$pluginAPIVersion-R0.1-SNAPSHOT")

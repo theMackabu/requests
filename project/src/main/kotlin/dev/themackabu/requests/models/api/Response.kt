@@ -5,7 +5,7 @@ import kotlinx.serialization.json.*
 
 @Serializable
 data class Response (
-    val error: String?,
     val code: Int,
-    val message: String,
+    val error: String?,
+    val message: String?,
 )
