@@ -1,33 +1,32 @@
 package dev.themackabu.requests
 
+import dev.themackabu.requests.config
+import dev.themackabu.requests.database
 import dev.themackabu.requests.cmd.Commands
+import dev.themackabu.requests.helpers.Logger
+import dev.themackabu.requests.api.startServer
+import dev.themackabu.requests.helpers.Messages
 import dev.themackabu.requests.models.ConfigInterface
 import dev.themackabu.requests.models.SubCommandsInterface
-import dev.themackabu.requests.config
-import dev.themackabu.requests.helpers.Messages
 import dev.themackabu.requests.helpers.player.dataListener
-import dev.themackabu.requests.helpers.Logger
-import dev.themackabu.requests.database
-import dev.themackabu.requests.api.startServer
 
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import org.bukkit.conversations.ConversationFactory
-import org.bukkit.conversations.ConversationPrefix
-import de.leonhard.storage.Toml
-import io.ktor.server.netty.*
+import org.bukkit.Bukkit
+import org.slf4j.LoggerFactory
+import ch.qos.logback.classic.Level
 import org.bukkit.plugin.java.JavaPlugin
-import java.io.File
-import org.bukkit.Bukkit;
-import java.util.logging.Level
 import cafe.adriel.satchel.SatchelStorage
+import org.bukkit.conversations.ConversationPrefix
+import io.ktor.server.netty.NettyApplicationEngine
+import org.bukkit.conversations.ConversationFactory
+import net.kyori.adventure.platform.bukkit.BukkitAudiences
 
 internal lateinit var plugin: JavaPlugin; private set
-internal lateinit var mainDB: SatchelStorage; private set
-internal lateinit var playerDB: SatchelStorage; private set
-internal lateinit var config: ConfigInterface; private set
-internal lateinit var conversation: ConversationFactory; private set
-internal lateinit var audiences: BukkitAudiences; private set
 internal lateinit var messages: Messages; private set
+internal lateinit var mainDB: SatchelStorage; private set
+internal lateinit var config: ConfigInterface; private set
+internal lateinit var playerDB: SatchelStorage; private set
+internal lateinit var audiences: BukkitAudiences; private set
+internal lateinit var conversation: ConversationFactory; private set
 internal lateinit var apiServer: NettyApplicationEngine; private set
 
 internal val log = Logger
@@ -57,6 +56,10 @@ fun loadPlugin(internal: JavaPlugin) {
 
 class Main: JavaPlugin() {
     override fun onEnable() {
+        /* disable logback */
+        val logger = LoggerFactory.getLogger("ktor.application")
+        (logger as? ch.qos.logback.classic.Logger)?.level = Level.OFF
+
         /* main services */
         loadPlugin(this)
 
