@@ -1,13 +1,16 @@
-package dev.themackabu.requests.utils
+package dev.themackabu.requests.helpers.player
 
-import dev.themackabu.requests.Main
-import dev.themackabu.requests.utils.getExpTotal
+import dev.themackabu.requests.playerDB
+import dev.themackabu.requests.plugin
+import dev.themackabu.requests.helpers.player.getExp
 import dev.themackabu.requests.models.api.PlayerInfo
 import dev.themackabu.requests.models.api.PlayerStatus
 import dev.themackabu.requests.models.api.PlayerHealth
 
 import java.util.UUID
-import com.google.gson.Gson
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
+
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.Listener
@@ -21,10 +24,6 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerExpChangeEvent
 import org.bukkit.event.player.PlayerLevelChangeEvent
 
-val db = Main.players
-var gson = Gson()
-val plugin = Main.getPlugin()
-
 private val moveDebounce = mutableMapOf<UUID, BukkitTask?>()
 private val interactDebounce = mutableMapOf<UUID, BukkitTask?>()
 
@@ -32,10 +31,10 @@ fun updatePlayer(player: Player) {
     val uuid = player.getUniqueId().toString()
     val maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.getValue()
 
-    val json = gson.toJson(PlayerInfo(
+    val json = Json.encodeToString(PlayerInfo(
         uuid = uuid,
         username = player.getName(),
-        level = getExpTotal(player),
+        level = getExp(player),
         allowFlight = player.getAllowFlight(),
         health = PlayerHealth(
             max = maxHealth,
@@ -49,7 +48,7 @@ fun updatePlayer(player: Player) {
     ))
 
     println("[DEBUG] event.update.player")
-    db.apply { set("players.$uuid", json) }
+    playerDB.apply { set("players.$uuid", json) }
 }
 
 fun debouncePlayerEvent(player: Player) {
@@ -61,7 +60,7 @@ fun debouncePlayerEvent(player: Player) {
     moveDebounce[uuid] = Bukkit.getScheduler().runTaskLater(plugin, runnable, delayTicks)
 }
 
-class PlayerDataListener: Listener {
+class dataListener: Listener {
     @EventHandler
     fun onPlayerMove(event: PlayerMoveEvent) {debouncePlayerEvent(event.player)}
     @EventHandler

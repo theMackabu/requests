@@ -1,6 +1,6 @@
 package dev.themackabu.requests.cmd.subCommands
 
-import dev.themackabu.requests.Main
+import dev.themackabu.requests.subCommands
 import org.bukkit.command.CommandSender
 import dev.themackabu.requests.models.SubCommandsInterface
 
@@ -13,7 +13,7 @@ class HelpSubCommand: SubCommandsInterface {
     override val neededPermission: String? = null
 
     override fun run(sender: CommandSender, args: Array<out String>) {
-        for (value in Main.subCommands.values) {
+        for (value in subCommands.values) {
             if (value.neededPermission == null || sender.hasPermission(value.neededPermission!!) || sender.hasPermission("requests.admin")) {
                 sender.sendMessage(value.usage + " - " + value.description)
             }

@@ -1,6 +1,6 @@
 package dev.themackabu.requests.api.routes
 
-import dev.themackabu.requests.Main
+import dev.themackabu.requests.playerDB
 import dev.themackabu.requests.models.api.PlayerInfo
 import dev.themackabu.requests.models.api.Response
 
@@ -11,8 +11,7 @@ import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 
 fun getPlayer(uuid: String): PlayerInfo {
-    val db = Main.players
-    val data = db.get<String>("players.$uuid")
+    val data = playerDB.get<String>("players.$uuid")
     val json = Json.decodeFromString<PlayerInfo>(data as String)
 
     return json

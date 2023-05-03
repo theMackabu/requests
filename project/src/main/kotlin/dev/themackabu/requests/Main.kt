@@ -1,13 +1,13 @@
 package dev.themackabu.requests
 
 import dev.themackabu.requests.cmd.Commands
-import dev.themackabu.requests.models.SubCommandsInterface
-import dev.themackabu.requests.config.ConfigManager
-import dev.themackabu.requests.config.MessagesManager
 import dev.themackabu.requests.models.ConfigInterface
-import dev.themackabu.requests.utils.PlayerDataListener
-import dev.themackabu.requests.utils.Logger
-import dev.themackabu.requests.db.Database
+import dev.themackabu.requests.models.SubCommandsInterface
+import dev.themackabu.requests.config
+import dev.themackabu.requests.helpers.Messages
+import dev.themackabu.requests.helpers.player.dataListener
+import dev.themackabu.requests.helpers.Logger
+import dev.themackabu.requests.database
 import dev.themackabu.requests.api.Api
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -15,78 +15,63 @@ import org.bukkit.conversations.ConversationFactory
 import org.bukkit.conversations.ConversationPrefix
 import de.leonhard.storage.Toml
 import io.ktor.server.netty.*
-import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
+import org.bukkit.Bukkit;
 import java.util.logging.Level
 import cafe.adriel.satchel.SatchelStorage
 
+internal lateinit var plugin: JavaPlugin; private set
+internal lateinit var mainDB: SatchelStorage; private set
+internal lateinit var playerDB: SatchelStorage; private set
+internal lateinit var config: ConfigInterface; private set
+internal lateinit var conversation: ConversationFactory; private set
+internal lateinit var audiences: BukkitAudiences; private set
+internal lateinit var messages: Messages; private set
+internal lateinit var apiServer: NettyApplicationEngine; private set
+
+internal val log = Logger
+internal var apiPort = 5000; private set
+internal val server = Bukkit.getServer()
+internal val subCommands: HashMap<String, SubCommandsInterface> = Commands.subCommands
+
+fun loadPlugin(internal: JavaPlugin) {
+    plugin = internal
+
+    /* messaging */
+    audiences = BukkitAudiences.create(internal)
+    conversation = ConversationFactory(internal)
+
+    /* config */
+    config = config("config.toml")
+    messages = Messages("messages.toml")
+
+    /* database */
+    mainDB = database(if (config.database["tokens"] != null) config.database["tokens"] as String else "tokens.db")
+    playerDB = database(if (config.database["players"] != null) config.database["players"] as String else "players.db")
+
+    /* api server */
+    apiPort = if (config.database["port"] != null) (config.api["port"] as String).toInt() else 5000
+    apiServer = Api(apiPort).start()
+}
+
 class Main: JavaPlugin() {
-    companion object {
-        private lateinit var plugin: Plugin
-        private lateinit var internal: Toml
-        private var port: Int = 5000
-
-        lateinit var db: SatchelStorage
-        lateinit var players: SatchelStorage
-        lateinit var messages: Toml
-        lateinit var api: NettyApplicationEngine;
-        lateinit var conversation: ConversationFactory;
-        lateinit var audiences: BukkitAudiences;
-        lateinit var config: ConfigInterface
-        lateinit var messagesManager: MessagesManager
-
-        val subCommands: HashMap<String, SubCommandsInterface> = Commands.subCommands
-
-        @Suppress("UNCHECKED_CAST")
-        fun reloadConfigs() {
-            this.createConfigs()
-            internal = ConfigManager(this.plugin, "config.toml").getConfig()
-
-            this.config = object: ConfigInterface {
-                override var api = internal.get("api") as HashMap<String, String>
-                override var plugin = internal.get("plugin") as HashMap<String, String>
-                override var database = internal.get("database") as HashMap<String, String>
-            }
-
-            this.port = if (this.config.database["port"] != null) (this.config.api["port"] as String).toInt() else 5000
-            this.db = Database(if (this.config.database["tokens"] != null) this.config.database["tokens"] as String else "tokens.db").init()
-            this.players = Database(if (this.config.database["players"] != null) this.config.database["players"] as String else "players.db").init()
-            this.messages = ConfigManager(this.plugin, "messages.toml").getConfig()
-            this.messagesManager = MessagesManager(this.messages)
-        }
-
-        fun getPlugin(): Plugin {
-            return this.plugin
-        }
-
-        private fun createConfigs() {
-            var dataFolder: String = plugin.dataFolder.absolutePath + File.separator
-            val logs = File("${dataFolder}log${File.separator}api.log")
-            logs.getParentFile().mkdirs()
-
-            if (!File("${dataFolder}log${File.separator}api.log").exists()) logs.createNewFile()
-            if (!File("${dataFolder}config.toml").exists()) plugin.saveResource("config.toml", false)
-            if (!File("${dataFolder}messages.toml").exists()) plugin.saveResource("messages.toml", false)
-        }
-    }
-
     override fun onEnable() {
-        plugin = this
-        api = Api(port).start()
-        audiences = BukkitAudiences.create(this)
-        conversation = ConversationFactory(this)
+        /* main services */
+        loadPlugin(this)
 
-        reloadConfigs()
+        /* register commands */
         this.getCommand("api")?.setExecutor(Commands())
         this.getCommand("api")?.tabCompleter = Commands()
-        getServer().getPluginManager().registerEvents(PlayerDataListener(), this)
+        server.pluginManager.registerEvents(dataListener(), this)
 
-        Logger.log("INFO", "plugin enabled.")
+        log.info("plugin enabled.")
     }
 
     override fun onDisable() {
-        api.stop(0, 0)
-        Logger.log("INFO", "plugin disabled.")
+        /* stop api server */
+        apiServer.stop(0, 0)
+
+        log.info("plugin disabled.")
     }
 }

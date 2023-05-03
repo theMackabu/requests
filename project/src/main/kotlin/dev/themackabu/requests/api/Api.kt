@@ -1,6 +1,6 @@
 package dev.themackabu.requests.api
 
-import dev.themackabu.requests.utils.Logger
+import dev.themackabu.requests.helpers.Logger
 import dev.themackabu.requests.api.FileLogger
 
 import dev.themackabu.requests.api.routes.playerInfo
@@ -42,7 +42,7 @@ class Api(port: Int) {
         }
 
         server.start()
-        Logger.log("INFO", "API server started on port $port.")
+        Logger.info("API server started on port $port.")
     }
 
     fun start(): NettyApplicationEngine {

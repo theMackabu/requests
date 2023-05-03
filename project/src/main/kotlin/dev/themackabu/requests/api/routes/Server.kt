@@ -1,6 +1,8 @@
 package dev.themackabu.requests.api.routes
 
-import dev.themackabu.requests.Main
+import dev.themackabu.requests.server
+import dev.themackabu.requests.messages
+import dev.themackabu.requests.plugin
 import dev.themackabu.requests.models.api.Server
 import dev.themackabu.requests.models.api.Players
 import dev.themackabu.requests.models.api.PlayerCount
@@ -9,18 +11,15 @@ import dev.themackabu.requests.models.api.Tps
 import dev.themackabu.requests.models.api.Memory
 import dev.themackabu.requests.models.api.Dimension
 
-import org.bukkit.Bukkit;
 import java.io.File
 import java.util.Base64
 import javax.imageio.ImageIO
 import java.lang.management.ManagementFactory;
 
-val server = Bukkit.getServer();
-
 fun serverInfo(): Server {
     return Server(
       name = server.getName(),
-      motd = Main.messagesManager.toLegacyString(server.motd()),
+      motd = messages.toLegacyString(server.motd()),
       onlineMode = server.getOnlineMode(),
       version = server.getVersion(),
       bukkitVersion = server.getBukkitVersion(),
@@ -64,7 +63,7 @@ fun serverIcon(): File {
     
     if (iconFile.exists()) { return iconFile } else {
         val defaultIcon = File.createTempFile("default-icon", ".png")
-        val inputStream = Main.getPlugin().getResource("default-icon.png")
+        val inputStream = plugin.getResource("default-icon.png")
         val image = ImageIO.read(inputStream)
         
         ImageIO.write(image, "png", defaultIcon)

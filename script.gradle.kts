@@ -10,7 +10,7 @@ open class MultiVersionPlugin: DefaultTask() {
         val rootDir = project.rootDir
 
         if (versions == null) versions = "all"
-        val allVersions = arrayListOf("1.19.4", "1.18.2", "1.17.1", "1.16.5", "1.15.2", "1.14.4", "1.13.2")
+        val allVersions = arrayListOf("1.19.4", "1.18.2", "1.17.1", "1.16.5")
         var selectedVersions = versions!!.split(",")
 
         if (versions == "all") selectedVersions = allVersions
@@ -52,21 +52,6 @@ open class MultiVersionPlugin: DefaultTask() {
                             content
                                 .replace("io.papermc.paper", "com.destroystokyo.paper")
                                 .replace(Regex("(fun javaVersion\\(\\) *= *)\"[0-9]+\""), "$1 \"11\"")
-                    } else if (version == "1.15.2") {
-                        newContent =
-                            content
-                                .replace("io.papermc.paper", "com.destroystokyo.paper")
-                                .replace(Regex("(fun javaVersion\\(\\) *= *)\"[0-9]+\""), "$1 \"8\"")
-                    } else if (version == "1.14.4") {
-                        newContent =
-                            content
-                                .replace("io.papermc.paper", "com.destroystokyo.paper")
-                                .replace(Regex("(fun javaVersion\\(\\) *= *)\"[0-9]+\""), "$1 \"8\"")
-                    } else if (version == "1.13.2") {
-                        newContent =
-                            content
-                                .replace("io.papermc.paper", "com.destroystokyo.paper")
-                                .replace(Regex("(fun javaVersion\\(\\) *= *)\"[0-9]+\""), "$1 \"8\"")
                     } else {
                         newContent = content.replace(Regex("(fun javaVersion\\(\\) *= *)\"[0-9]+\""), "$1 \"8\"")
                     }
@@ -87,11 +72,11 @@ open class MultiVersionPlugin: DefaultTask() {
     }
 }
 
-tasks.register<MultiVersionPlugin>("multiVersionPlugin")
 
 open class moveBuilds: DefaultTask() {
     override fun getGroup() = "application"
     override fun getDescription() = "Moves all builds from all versions of project to root project's build folder"
+    
     @TaskAction
     fun move() {
         val rootDir = project.rootDir
@@ -113,4 +98,5 @@ open class moveBuilds: DefaultTask() {
     }
 }
 
+tasks.register<MultiVersionPlugin>("multiVersionPlugin")
 tasks.register<moveBuilds>("moveBuilds")

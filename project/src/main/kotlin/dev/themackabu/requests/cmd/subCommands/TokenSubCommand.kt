@@ -1,7 +1,8 @@
 package dev.themackabu.requests.cmd.subCommands
 
-import dev.themackabu.requests.Main
-import dev.themackabu.requests.db.Database
+import dev.themackabu.requests.mainDB
+import dev.themackabu.requests.messages
+import dev.themackabu.requests.conversation
 import dev.themackabu.requests.models.UserInterface
 import dev.themackabu.requests.models.SubCommandsInterface
 
@@ -35,7 +36,6 @@ class TokenSubCommand: SubCommandsInterface {
 
     override fun run(sender: CommandSender, args: Array<out String>) {
         if (args[1] == "new") {
-            val db = Main.db
             when (sender) {
                 is Player -> {
                     var gson = Gson()
@@ -43,7 +43,7 @@ class TokenSubCommand: SubCommandsInterface {
                     val token = generateToken(player)
                     val encodedToken = Base64.getEncoder().encodeToString(gson.toJson(token).toByteArray())
 
-                    val message = Main.messagesManager.getMessage(
+                    val message = messages.getMessage(
                         "commands", "generate-token",
                         hashMapOf("%token%" to encodedToken),
                         addPrefix = false
@@ -52,21 +52,21 @@ class TokenSubCommand: SubCommandsInterface {
                     val prompt = object: Prompt {
                         override fun blocksForInput(context: ConversationContext): Boolean { return true }
                         override fun getPromptText(context: ConversationContext): String {
-                            return Main.messagesManager.toLegacyString(Main.messagesManager.getMessage("commands", "action-destructive", hashMapOf("%action%" to "generate a new token"), addPrefix = false))
+                            return messages.toLegacyString(messages.getMessage("commands", "action-destructive", hashMapOf("%action%" to "generate a new token"), addPrefix = false))
                         }
                         override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
                             if (input.equals("y", ignoreCase = true) || input.equals("yes", ignoreCase = true)) {
-                                Main.messagesManager.sendMessage(sender, message)
-                                db.apply { set(player.getUniqueId().toString(), encodedToken) }
-                            } else { Main.messagesManager.send(sender, "<grey>Aborting...") }
+                                messages.sendMessage(sender, message)
+                                mainDB.apply { set(player.getUniqueId().toString(), encodedToken) }
+                            } else { messages.send(sender, "<grey>Aborting...") }
                             return null
                         }
                     }
 
-                    db.apply {
+                    mainDB.apply {
                         when {
                             contains(token.uuid) -> {
-                                Main.conversation.withFirstPrompt(prompt)
+                                conversation.withFirstPrompt(prompt)
                                     .withLocalEcho(false)
                                     .withTimeout(30)
                                     .withEscapeSequence("cancel")
@@ -74,8 +74,8 @@ class TokenSubCommand: SubCommandsInterface {
                                     .begin()
                             }
                         else -> {
-                            Main.messagesManager.sendMessage(sender, message)
-                            db.apply { set(player.getUniqueId().toString(), encodedToken) }
+                            messages.sendMessage(sender, message)
+                            mainDB.apply { set(player.getUniqueId().toString(), encodedToken) }
                         }}
                     }
                 }
@@ -84,24 +84,24 @@ class TokenSubCommand: SubCommandsInterface {
                     val chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()
                     val masterToken = NanoIdUtils.randomNanoId(SecureRandom(), chars, 35)
                     val placeholders: HashMap<String, String> = hashMapOf("%token%" to masterToken)
-                    val message = Main.messagesManager.getMessage("commands", "console-generate-token", placeholders, addPrefix = false)
+                    val message = messages.getMessage("commands", "console-generate-token", placeholders, addPrefix = false)
 
                     val prompt = object: Prompt {
-                        override fun getPromptText(context: ConversationContext): String { return "\n" + Main.messagesManager.toLegacyString(Main.messagesManager.getMessage("commands", "action-destructive", hashMapOf("%action%" to "generate a new master token"), addPrefix = false)) }
+                        override fun getPromptText(context: ConversationContext): String { return "\n" + messages.toLegacyString(messages.getMessage("commands", "action-destructive", hashMapOf("%action%" to "generate a new master token"), addPrefix = false)) }
                         override fun blocksForInput(context: ConversationContext): Boolean { return true }
                         override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
                             if (input.equals("y", ignoreCase = true) || input.equals("yes", ignoreCase = true)) {
-                                Main.messagesManager.sendMessage(sender, message)
-                                db.apply { set("token.master", masterToken) }
-                            } else { Main.messagesManager.send(sender, "<grey>Aborting...") }
+                                messages.sendMessage(sender, message)
+                                mainDB.apply { set("token.master", masterToken) }
+                            } else { messages.send(sender, "<grey>Aborting...") }
                             return null
                         }
                     }
 
-                    db.apply {
+                    mainDB.apply {
                         when {
                             contains("token.master") -> {
-                                Main.conversation.withFirstPrompt(prompt)
+                                conversation.withFirstPrompt(prompt)
                                     .withLocalEcho(false)
                                     .withTimeout(30)
                                     .withEscapeSequence("cancel")
@@ -109,8 +109,8 @@ class TokenSubCommand: SubCommandsInterface {
                                     .begin()
                             }
                             else -> {
-                                Main.messagesManager.sendMessage(sender, message)
-                                db.apply { set("token.master", masterToken) }
+                                messages.sendMessage(sender, message)
+                                mainDB.apply { set("token.master", masterToken) }
                             }}
                     }
                 }
@@ -118,8 +118,8 @@ class TokenSubCommand: SubCommandsInterface {
         } else {
             var placeholders: HashMap<String, String> = hashMapOf("%argument%" to args[1], "%usage%" to usage)
 
-            Main.messagesManager.sendMessage(sender, Main.messagesManager.getMessage("commands", "invalid-arguments", placeholders, addPrefix = true))
-            Main.messagesManager.sendMessage(sender, Main.messagesManager.getMessage("commands", "command-usage", placeholders, addPrefix = true))
+            messages.sendMessage(sender, messages.getMessage("commands", "invalid-arguments", placeholders, addPrefix = true))
+            messages.sendMessage(sender, messages.getMessage("commands", "command-usage", placeholders, addPrefix = true))
         }
     }
 

@@ -7,7 +7,7 @@ import io.ktor.server.request.*
 import java.io.File
 import com.google.gson.Gson
 import java.time.LocalDateTime
-import dev.themackabu.requests.Main
+import dev.themackabu.requests.plugin
 import java.time.format.DateTimeFormatter
 
 interface LogMessage {
@@ -19,7 +19,7 @@ interface LogMessage {
 }
 
 class PluginConfiguration {
-    var path: String = Main.getPlugin().dataFolder.absolutePath + File.separator + "log" + File.separator + "api.log"
+    var path: String = plugin.dataFolder.absolutePath + File.separator + "log" + File.separator + "api.log"
 }
 
 val FileLogger = createApplicationPlugin(name = "FileLogger", createConfiguration = ::PluginConfiguration) {
