@@ -19,9 +19,9 @@ if (pluginAPIVersion.isEmpty()) {
 }
 
 plugins {
+    kotlin("jvm") version "1.8.21"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
-kotlin("jvm") version "1.8.21"
     application
     java
 }
@@ -38,7 +38,7 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.0")
     implementation("ch.qos.logback:logback-classic:1.4.6")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-RC")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("net.kyori:adventure-api:4.13.1")

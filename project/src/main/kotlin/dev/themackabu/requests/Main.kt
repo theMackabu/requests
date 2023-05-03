@@ -8,7 +8,7 @@ import dev.themackabu.requests.helpers.Messages
 import dev.themackabu.requests.helpers.player.dataListener
 import dev.themackabu.requests.helpers.Logger
 import dev.themackabu.requests.database
-import dev.themackabu.requests.api.Api
+import dev.themackabu.requests.api.startServer
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.conversations.ConversationFactory
@@ -52,7 +52,7 @@ fun loadPlugin(internal: JavaPlugin) {
 
     /* api server */
     apiPort = if (config.database["port"] != null) (config.api["port"] as String).toInt() else 5000
-    apiServer = Api(apiPort).start()
+    apiServer = startServer(apiPort)
 }
 
 class Main: JavaPlugin() {
@@ -71,7 +71,6 @@ class Main: JavaPlugin() {
     override fun onDisable() {
         /* stop api server */
         apiServer.stop(0, 0)
-
         log.info("plugin disabled.")
     }
 }

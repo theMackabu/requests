@@ -1,4 +1,4 @@
-package dev.themackabu.requests.api
+package dev.themackabu.requests.helpers
 
 import io.ktor.server.application.*
 import io.ktor.server.response.*

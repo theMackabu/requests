@@ -13,6 +13,7 @@ fun config(path: String): ConfigInterface {
     val file = File(plugin.dataFolder.absolutePath + File.separator + path)
     val config = Toml(file)
     
+    log.info("Loaded config $path")
     return ConfigInterface(
         api = config.get("api") as? HashMap<String, String> ?: HashMap<String, String>(),
         plugin = config.get("plugin") as? HashMap<String, String> ?: HashMap<String, String>(),
