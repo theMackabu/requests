@@ -12,33 +12,32 @@ import dev.themackabu.requests.models.api.Memory
 import dev.themackabu.requests.models.api.Dimension
 
 import java.io.File
-import java.util.Base64
 import javax.imageio.ImageIO
-import java.lang.management.ManagementFactory;
+import java.lang.management.ManagementFactory
 
 fun serverInfo(): Server {
     return Server(
-      name = server.getName(),
+      name = server.name,
       motd = messages.toLegacyString(server.motd()),
-      onlineMode = server.getOnlineMode(),
-      version = server.getVersion(),
-      bukkitVersion = server.getBukkitVersion(),
-      viewDistance = server.getViewDistance(),
+      onlineMode = server.onlineMode,
+      version = server.version,
+      bukkitVersion = server.bukkitVersion,
+      viewDistance = server.viewDistance,
       players = Players(
-          allowFlight = server.getAllowFlight(),
-          isWhitelist = server.isWhitelistEnforced(),
-          defautGamemode = server.getDefaultGameMode().toString(),
-          resourcePack = server.isResourcePackRequired(),
-          isSecureProfile = server.isEnforcingSecureProfiles(),
+          allowFlight = server.allowFlight,
+          isWhitelist = server.isWhitelistEnforced,
+          defautGamemode = server.defaultGameMode.toString(),
+          resourcePack = server.isResourcePackRequired,
+          isSecureProfile = server.isEnforcingSecureProfiles,
           playerCount = PlayerCount(
-              online = server.getOnlinePlayers().size,
-              max = server.getMaxPlayers()
+              online = server.onlinePlayers.size,
+              max = server.maxPlayers
           )
       ),
       health = Health(
           cpuCount = Runtime.getRuntime().availableProcessors(),
-          uptime = ManagementFactory.getRuntimeMXBean().getUptime() / 1000L,
-          warningState = server.getWarningState().toString(),
+          uptime = ManagementFactory.getRuntimeMXBean().uptime / 1000L,
+          warningState = server.warningState.toString(),
           tps = Tps(
               oneMinute = server.tps[0],
               fiveMinutes = server.tps[1],
@@ -51,9 +50,9 @@ fun serverInfo(): Server {
           )
       ),
       dimension = Dimension(
-          defaultType = server.getWorldType(),
-          allowNether = server.getAllowNether(),
-          allowEnd = server.getAllowEnd()
+          defaultType = server.worldType,
+          allowNether = server.allowNether,
+          allowEnd = server.allowEnd
       ),
     )
 }
@@ -61,7 +60,7 @@ fun serverInfo(): Server {
 fun serverIcon(): File {
     val iconFile = File("server-icon.png")
     
-    if (iconFile.exists()) { return iconFile } else {
+    if (!iconFile.exists()) {
         val defaultIcon = File.createTempFile("default-icon", ".png")
         val inputStream = plugin.getResource("default-icon.png")
         val image = ImageIO.read(inputStream)
@@ -69,4 +68,6 @@ fun serverIcon(): File {
         ImageIO.write(image, "png", defaultIcon)
         return defaultIcon
     }
+    
+    return iconFile
 }

@@ -6,24 +6,23 @@ import dev.themackabu.requests.conversation
 import dev.themackabu.requests.models.UserInterface
 import dev.themackabu.requests.models.SubCommandsInterface
 
-import java.util.Scanner
 import java.util.Base64
-import java.security.SecureRandom;
-import com.google.gson.Gson
-import com.aventrix.jnanoid.jnanoid.NanoIdUtils
-import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 import org.bukkit.Bukkit
-import java.io.File
-import org.bukkit.conversations.ConversationContext
+import kotlinx.serialization.*
+import org.bukkit.entity.Player
+import java.security.SecureRandom
+import kotlinx.serialization.json.*
 import org.bukkit.conversations.Prompt
+import org.bukkit.command.CommandSender
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils
+import org.bukkit.conversations.ConversationContext
 
 fun generateToken(player: Player): UserInterface {
-    return object: UserInterface {
-        override var name = player.getName()
-        override var uuid = player.getUniqueId().toString()
-        override var token = NanoIdUtils.randomNanoId()
-    }
+    return UserInterface(
+        name = player.name,
+        uuid = player.uniqueId.toString(),
+        token = NanoIdUtils.randomNanoId()
+    )
 }
 
 class TokenSubCommand: SubCommandsInterface {
@@ -38,10 +37,9 @@ class TokenSubCommand: SubCommandsInterface {
         if (args[1] == "new") {
             when (sender) {
                 is Player -> {
-                    var gson = Gson()
                     val player: Player = sender
                     val token = generateToken(player)
-                    val encodedToken = Base64.getEncoder().encodeToString(gson.toJson(token).toByteArray())
+                    val encodedToken = Base64.getEncoder().encodeToString(Json.encodeToString(token).toByteArray())
 
                     val message = messages.getMessage(
                         "commands", "generate-token",
@@ -116,7 +114,7 @@ class TokenSubCommand: SubCommandsInterface {
                 }
             }
         } else {
-            var placeholders: HashMap<String, String> = hashMapOf("%argument%" to args[1], "%usage%" to usage)
+            val placeholders: HashMap<String, String> = hashMapOf("%argument%" to args[1], "%usage%" to usage)
 
             messages.sendMessage(sender, messages.getMessage("commands", "invalid-arguments", placeholders, addPrefix = true))
             messages.sendMessage(sender, messages.getMessage("commands", "command-usage", placeholders, addPrefix = true))
