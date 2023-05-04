@@ -1,7 +1,5 @@
 package dev.themackabu.requests
 
-import dev.themackabu.requests.config
-import dev.themackabu.requests.database
 import dev.themackabu.requests.cmd.Commands
 import dev.themackabu.requests.helpers.Logger
 import dev.themackabu.requests.api.startServer
@@ -11,11 +9,12 @@ import dev.themackabu.requests.models.SubCommandsInterface
 import dev.themackabu.requests.helpers.player.dataListener
 
 import org.bukkit.Bukkit
+import org.apache.logging.log4j.Level
 import org.bukkit.plugin.java.JavaPlugin
 import cafe.adriel.satchel.SatchelStorage
-import org.bukkit.conversations.ConversationPrefix
 import io.ktor.server.netty.NettyApplicationEngine
 import org.bukkit.conversations.ConversationFactory
+import org.apache.logging.log4j.core.config.Configurator
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 
 internal lateinit var plugin: JavaPlugin; private set
@@ -33,6 +32,7 @@ internal val server = Bukkit.getServer()
 internal val subCommands: HashMap<String, SubCommandsInterface> = Commands.subCommands
 
 fun loadPlugin(internal: JavaPlugin) {
+    /* JavaPlugin */
     plugin = internal
 
     /* messaging */
@@ -54,6 +54,9 @@ fun loadPlugin(internal: JavaPlugin) {
 
 class Main: JavaPlugin() {
     override fun onEnable() {
+        /* disable ktor.logger */
+        Configurator.setLevel("ktor.application", Level.OFF)
+
         /* main services */
         loadPlugin(this)
 

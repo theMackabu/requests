@@ -34,13 +34,16 @@ repositories {
 }
 
 dependencies {
+    implementation("org.apache.logging.log4j:log4j-slf4j18-impl:2.13.3")
+    implementation("org.apache.logging.log4j:log4j-api:2.13.3")
+    implementation("org.apache.logging.log4j:log4j-core:2.13.3")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
     implementation("io.ktor:ktor-server-content-negotiation-jvm:2.3.0")
     implementation("io.ktor:ktor-serialization-gson-jvm:2.3.0")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.0")
-    implementation("io.ktor:ktor-server-core-jvm:2.3.0")
+    implementation("io.ktor:ktor-server-core-jvm:2.3.lo0")
     implementation("io.ktor:ktor-server-double-receive-jvm:2.3.0")
     implementation("io.ktor:ktor-server-cors-jvm:2.3.0")
     implementation("io.ktor:ktor-server-netty-jvm:2.3.0")
