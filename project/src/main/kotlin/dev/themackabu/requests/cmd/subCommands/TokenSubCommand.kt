@@ -1,5 +1,6 @@
 package dev.themackabu.requests.cmd.subCommands
 
+import java.util.UUID
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import dev.themackabu.requests.mainDB
@@ -7,9 +8,7 @@ import org.bukkit.conversations.Prompt
 import dev.themackabu.requests.messages
 import org.bukkit.command.CommandSender
 import dev.themackabu.requests.conversation
-import dev.themackabu.requests.helpers.nanoid
-import dev.themackabu.requests.helpers.toJson
-import dev.themackabu.requests.helpers.toBase64
+import dev.themackabu.requests.helpers.*
 import dev.themackabu.requests.models.cmd.UserToken
 import org.bukkit.conversations.ConversationContext
 import dev.themackabu.requests.models.cmd.SubCommand
@@ -54,26 +53,31 @@ class TokenSubCommand: SubCommand(
                         override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
                             if (input.equals("y", ignoreCase = true) || input.equals("yes", ignoreCase = true)) {
                                 messages.sendMessage(sender, message)
-                                mainDB.apply { set("token.${token}", tokenStorage) }
+                                mainDB["token.${token}"] = tokenStorage
                             } else { messages.send(sender, "<grey>Aborting...") }
                             return null
                         }
                     }
 
-                    mainDB.apply {
-                        when {
-                            contains("token.${token}") -> {
+                        mainDB.keys.forEach { key ->
+                            val split = key.split(".")[1].fromBase64()
+                            val uniqueId = if (split != "") UUID.fromString(split.fromJson<UserToken>().uuid) else { null }
+
+                            if (uniqueId == player.uniqueId) {
+                                mainDB.remove(key)
                                 conversation.withFirstPrompt(prompt)
                                     .withLocalEcho(false)
-                                    .withTimeout(30)
-                                    .withEscapeSequence("cancel")
                                     .buildConversation(player)
                                     .begin()
+
+                                return
+                            } else {
+                                mainDB.remove(key)
+                                messages.sendMessage(sender, message)
+                                mainDB["token.${token}"] = tokenStorage
+
+                                return
                             }
-                        else -> {
-                            messages.sendMessage(sender, message)
-                            mainDB.apply { set("token.${token}", tokenStorage) }
-                        }}
                     }
                 }
                 else -> {
@@ -88,7 +92,7 @@ class TokenSubCommand: SubCommand(
                         override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
                             if (input.equals("y", ignoreCase = true) || input.equals("yes", ignoreCase = true)) {
                                 messages.sendMessage(sender, message)
-                                mainDB.apply { set("token.master", masterToken) }
+                                mainDB["token.master"] = masterToken
                             } else { messages.send(sender, "<grey>Aborting...") }
                             return null
                         }
@@ -106,7 +110,7 @@ class TokenSubCommand: SubCommand(
                             }
                             else -> {
                                 messages.sendMessage(sender, message)
-                                mainDB.apply { set("token.master", masterToken) }
+                                set("token.master", masterToken)
                             }}
                     }
                 }

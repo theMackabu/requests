@@ -60,6 +60,9 @@ class Main: JavaPlugin() {
         /* main services */
         loadPlugin(this)
 
+        /* init token DB */
+        mainDB["token."] = ""
+
         /* register commands */
         this.getCommand("api")?.setExecutor(Commands())
         this.getCommand("api")?.tabCompleter = Commands()
