@@ -1,6 +1,6 @@
-package dev.themackabu.requests.models
+package dev.themackabu.requests.models.config
 
-data class ConfigInterface(
+data class Config (
     val api: HashMap<String, String>,
     val plugin: HashMap<String, String>,
     val database: HashMap<String, String>

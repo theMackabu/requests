@@ -5,5 +5,5 @@ flags = "--add-modules=jdk.incubator.vector -XX:+UseG1GC -XX:+ParallelRefProcEna
 
 [tasks]
 createServer = { hide = true, script = ["mkdir server", "wget https://api.papermc.io/v2/projects/paper/versions/1.19.4/builds/521/downloads/paper-1.19.4-521.jar server/paper-1.19.4-521.jar"] }
-build = { info = "build requests jar", script = ["gradle build", "rm -rf server/plugins/requests", "cp project/build/libs/requests-%{env.version}-all.jar server/plugins", "tmux send 'reload confirm' ENTER;"] }
+build = { info = "build requests jar", script = ["gradle build", "rm -rf server/plugins/requests/", "cp project/build/libs/requests-%{env.version}-all.jar server/plugins", "tmux send 'reload confirm' ENTER;"] }
 start = { info = "test requests jar", depends = ["build"], path = "server", script = ["tmux new-session -d -s mc_server_testing 'java -Xms4096M -Xmx4096M %{env.flags} -jar %{env.server} --nogui'", "tmux a"] }

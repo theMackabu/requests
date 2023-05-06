@@ -2,14 +2,14 @@ package dev.themackabu.requests.cmd
 
 import org.bukkit.command.*
 import dev.themackabu.requests.messages
+import dev.themackabu.requests.models.cmd.SubCommand
 import dev.themackabu.requests.cmd.subCommands.HelpSubCommand
 import dev.themackabu.requests.cmd.subCommands.ReloadSubCommand
 import dev.themackabu.requests.cmd.subCommands.TokenSubCommand
-import dev.themackabu.requests.models.SubCommandsInterface
 
 class Commands: CommandExecutor, TabCompleter {
     companion object {
-        val subCommands: HashMap<String, SubCommandsInterface> = hashMapOf(
+        val subCommands: HashMap<String, SubCommand> = hashMapOf(
             "help" to HelpSubCommand(),
             "reload" to ReloadSubCommand(),
             "token" to TokenSubCommand()
@@ -31,7 +31,7 @@ class Commands: CommandExecutor, TabCompleter {
             return true
         }
 
-        val subCommand: SubCommandsInterface = subCommands[args[0]] as SubCommandsInterface
+        val subCommand: SubCommand = subCommands[args[0]] as SubCommand
         placeholders["%description%"] = subCommand.description
         placeholders["%usage%"] = subCommand.usage
         placeholders["%minArguments%"] = subCommand.minArguments.toString()

@@ -1,49 +1,52 @@
 package dev.themackabu.requests.cmd.subCommands
 
-import dev.themackabu.requests.mainDB
-import dev.themackabu.requests.messages
-import dev.themackabu.requests.conversation
-import dev.themackabu.requests.models.UserInterface
-import dev.themackabu.requests.models.SubCommandsInterface
-
 import java.util.Base64
 import org.bukkit.Bukkit
-import kotlinx.serialization.*
 import org.bukkit.entity.Player
 import java.security.SecureRandom
-import kotlinx.serialization.json.*
+import dev.themackabu.requests.mainDB
+import kotlinx.serialization.json.Json
 import org.bukkit.conversations.Prompt
+import dev.themackabu.requests.messages
 import org.bukkit.command.CommandSender
+import dev.themackabu.requests.conversation
+import kotlinx.serialization.encodeToString
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils
+import dev.themackabu.requests.models.cmd.UserToken
 import org.bukkit.conversations.ConversationContext
+import dev.themackabu.requests.models.cmd.SubCommand
+import dev.themackabu.requests.models.cmd.TokenStorage
 
-fun generateToken(player: Player): UserInterface {
-    return UserInterface(
+fun generateToken(player: Player): UserToken {
+    return UserToken(
         name = player.name,
         uuid = player.uniqueId.toString(),
         token = NanoIdUtils.randomNanoId()
     )
 }
 
-class TokenSubCommand: SubCommandsInterface {
-    override val name: String = "token"
-    override val description: String = "Creates a new token to use the api"
-    override val usage: String = "/api token new"
-    override val minArguments: Int = 1
-    override val executableByConsole: Boolean = true
-    override val neededPermission: String = "requests.token.new"
-
+class TokenSubCommand: SubCommand(
+    name = "token",
+    description = "Creates a new token to use the api",
+    usage = "/api token new",
+    minArguments = 1,
+    executableByConsole = true,
+    neededPermission = "requests.token.new"
+) {
     override fun run(sender: CommandSender, args: Array<out String>) {
         if (args[1] == "new") {
             when (sender) {
                 is Player -> {
                     val player: Player = sender
                     val token = generateToken(player)
-                    val encodedToken = Base64.getEncoder().encodeToString(Json.encodeToString(token).toByteArray())
+                    val tokenStorage = TokenStorage(
+                        token = Base64.getEncoder().encodeToString(Json.encodeToString(token).toByteArray()),
+                        uses = 0
+                    )
 
                     val message = messages.getMessage(
                         "commands", "generate-token",
-                        hashMapOf("%token%" to encodedToken),
+                        hashMapOf("%token%" to tokenStorage.token),
                         addPrefix = false
                     )
 
@@ -55,7 +58,7 @@ class TokenSubCommand: SubCommandsInterface {
                         override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
                             if (input.equals("y", ignoreCase = true) || input.equals("yes", ignoreCase = true)) {
                                 messages.sendMessage(sender, message)
-                                mainDB.apply { set(player.getUniqueId().toString(), encodedToken) }
+                                mainDB.apply { set("token.${player.uniqueId}", Json.encodeToString(tokenStorage)) }
                             } else { messages.send(sender, "<grey>Aborting...") }
                             return null
                         }
@@ -63,7 +66,7 @@ class TokenSubCommand: SubCommandsInterface {
 
                     mainDB.apply {
                         when {
-                            contains(token.uuid) -> {
+                            contains("token.${player.uniqueId}") -> {
                                 conversation.withFirstPrompt(prompt)
                                     .withLocalEcho(false)
                                     .withTimeout(30)
@@ -73,7 +76,7 @@ class TokenSubCommand: SubCommandsInterface {
                             }
                         else -> {
                             messages.sendMessage(sender, message)
-                            mainDB.apply { set(player.getUniqueId().toString(), encodedToken) }
+                            mainDB.apply { set("token.${player.uniqueId}", Json.encodeToString(tokenStorage)) }
                         }}
                     }
                 }

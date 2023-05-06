@@ -1,19 +1,18 @@
 package dev.themackabu.requests.api.routes
 
-import dev.themackabu.requests.server
-import dev.themackabu.requests.messages
-import dev.themackabu.requests.plugin
-import dev.themackabu.requests.models.api.Server
-import dev.themackabu.requests.models.api.Players
-import dev.themackabu.requests.models.api.PlayerCount
-import dev.themackabu.requests.models.api.Health
-import dev.themackabu.requests.models.api.Tps
-import dev.themackabu.requests.models.api.Memory
-import dev.themackabu.requests.models.api.Dimension
-
 import java.io.File
 import javax.imageio.ImageIO
+import dev.themackabu.requests.server
+import dev.themackabu.requests.plugin
+import dev.themackabu.requests.messages
+import dev.themackabu.requests.models.api.Tps
 import java.lang.management.ManagementFactory
+import dev.themackabu.requests.models.api.Server
+import dev.themackabu.requests.models.api.Health
+import dev.themackabu.requests.models.api.Memory
+import dev.themackabu.requests.models.api.Players
+import dev.themackabu.requests.models.api.Dimension
+import dev.themackabu.requests.models.api.PlayerCount
 
 fun serverInfo(): Server {
     return Server(

@@ -2,19 +2,19 @@ package dev.themackabu.requests.cmd.subCommands
 
 import dev.themackabu.requests.plugin
 import dev.themackabu.requests.messages
-import dev.themackabu.requests.loadPlugin
-import dev.themackabu.requests.apiServer
 import org.bukkit.command.CommandSender
-import dev.themackabu.requests.models.SubCommandsInterface
+import dev.themackabu.requests.apiServer
+import dev.themackabu.requests.loadPlugin
+import dev.themackabu.requests.models.cmd.SubCommand
 
-class ReloadSubCommand: SubCommandsInterface {
-    override val name: String = "reload"
-    override val description: String = "Reloads the plugin's configuration files."
-    override val usage: String = "/api reload"
-    override val minArguments: Int = 0
-    override val executableByConsole: Boolean = true
-    override val neededPermission: String = "requests.reload"
-
+class ReloadSubCommand: SubCommand(
+    name = "reload",
+    description = "Reloads the plugin's configuration files.",
+    usage = "/api reload",
+    minArguments = 0,
+    executableByConsole  = true,
+    neededPermission ="requests.reload"
+) {
     override fun run(sender: CommandSender, args: Array<out String>) {
         apiServer.stop(0, 0)
         loadPlugin(plugin)

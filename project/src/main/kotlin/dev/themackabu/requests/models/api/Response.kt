@@ -1,5 +1,5 @@
 package dev.themackabu.requests.models.api
-import kotlinx.serialization.*
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class Response (

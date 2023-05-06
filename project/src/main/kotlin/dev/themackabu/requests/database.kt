@@ -1,9 +1,7 @@
 package dev.themackabu.requests
 
 import java.io.File
-import dev.themackabu.requests.log
 import cafe.adriel.satchel.Satchel
-import dev.themackabu.requests.plugin
 import cafe.adriel.satchel.SatchelStorage
 import cafe.adriel.satchel.storer.file.FileSatchelStorer
 import cafe.adriel.satchel.encrypter.bypass.BypassSatchelEncrypter

@@ -1,63 +1,58 @@
 package dev.themackabu.requests.helpers.player
 
-import dev.themackabu.requests.playerDB
-import dev.themackabu.requests.plugin
-import dev.themackabu.requests.helpers.player.getExp
-import dev.themackabu.requests.models.api.PlayerInfo
-import dev.themackabu.requests.models.api.PlayerStatus
-import dev.themackabu.requests.models.api.PlayerHealth
-
 import java.util.UUID
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
-
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.event.EventHandler
+import dev.themackabu.requests.plugin
 import org.bukkit.attribute.Attribute
+import kotlinx.serialization.json.Json
 import org.bukkit.scheduler.BukkitTask
+import dev.themackabu.requests.playerDB
+import kotlinx.serialization.encodeToString
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerLoginEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerExpChangeEvent
+import dev.themackabu.requests.models.api.PlayerInfo
 import org.bukkit.event.player.PlayerLevelChangeEvent
+import dev.themackabu.requests.models.api.PlayerStatus
+import dev.themackabu.requests.models.api.PlayerHealth
 
-private val moveDebounce = mutableMapOf<UUID, BukkitTask?>()
-private val interactDebounce = mutableMapOf<UUID, BukkitTask?>()
+private val debouncePlayer = mutableMapOf<UUID, BukkitTask?>()
 
 fun updatePlayer(player: Player) {
-    val uuid = player.getUniqueId().toString()
-    val maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.getValue()
+    val uuid = player.uniqueId.toString()
+    val maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value
 
     val json = Json.encodeToString(PlayerInfo(
         uuid = uuid,
-        username = player.getName(),
+        username = player.name,
         level = getExp(player),
-        allowFlight = player.getAllowFlight(),
+        allowFlight = player.allowFlight,
         health = PlayerHealth(
             max = maxHealth,
-            current = player.getHealth(),
-            percent = player.getHealth() / maxHealth as Double,
-            absorption = player.getAbsorptionAmount()
+            current = player.health,
+            percent = player.health / maxHealth as Double,
+            absorption = player.absorptionAmount
         ),
         status = PlayerStatus(
-            online = player.isOnline()
+            online = player.isOnline
         )
     ))
 
-    println("[DEBUG] event.update.player")
     playerDB.apply { set("players.$uuid", json) }
 }
 
 fun debouncePlayerEvent(player: Player) {
     val delayTicks = 20L
-    val uuid = player.getUniqueId()
+    val uuid = player.uniqueId
     val runnable = Runnable { updatePlayer(player) }
 
-    moveDebounce[uuid]?.cancel()
-    moveDebounce[uuid] = Bukkit.getScheduler().runTaskLater(plugin, runnable, delayTicks)
+    debouncePlayer[uuid]?.cancel()
+    debouncePlayer[uuid] = Bukkit.getScheduler().runTaskLater(plugin, runnable, delayTicks)
 }
 
 class dataListener: Listener {

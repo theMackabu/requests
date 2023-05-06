@@ -1,26 +1,25 @@
 package dev.themackabu.requests.api
 
-import dev.themackabu.requests.log
-import dev.themackabu.requests.helpers.FileLogger
-import dev.themackabu.requests.models.api.Response
-import dev.themackabu.requests.api.routes.playerInfo
-import dev.themackabu.requests.api.routes.serverInfo
-import dev.themackabu.requests.api.routes.serverIcon
-import dev.themackabu.requests.api.routes.serverWorlds
-
 import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.netty.*
 import io.ktor.server.engine.*
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
+import dev.themackabu.requests.log
 import io.ktor.server.application.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.doublereceive.*
 import io.ktor.server.plugins.defaultheaders.*
+import dev.themackabu.requests.helpers.FileLogger
+import dev.themackabu.requests.models.api.Response
 import io.ktor.server.plugins.contentnegotiation.*
+import dev.themackabu.requests.api.routes.playerInfo
+import dev.themackabu.requests.api.routes.serverInfo
+import dev.themackabu.requests.api.routes.serverIcon
+import dev.themackabu.requests.api.routes.serverWorlds
 
 fun startServer(port: Int): NettyApplicationEngine {
     val server = embeddedServer(Netty, port = port) {
@@ -33,11 +32,7 @@ fun startServer(port: Int): NettyApplicationEngine {
 
         install(Authentication) {
             bearer {
-                authenticate { tokenCredential ->
-                    if (tokenCredential.token == "abc123") {
-                        UserIdPrincipal("jetbrains")
-                    } else { null }
-                }
+                authenticate { tokenCredential -> checkToken(tokenCredential) }
             }
         }
 

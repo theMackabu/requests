@@ -4,8 +4,8 @@ import dev.themackabu.requests.cmd.Commands
 import dev.themackabu.requests.helpers.Logger
 import dev.themackabu.requests.api.startServer
 import dev.themackabu.requests.helpers.Messages
-import dev.themackabu.requests.models.ConfigInterface
-import dev.themackabu.requests.models.SubCommandsInterface
+import dev.themackabu.requests.models.config.Config
+import dev.themackabu.requests.models.cmd.SubCommand
 import dev.themackabu.requests.helpers.player.dataListener
 
 import org.bukkit.Bukkit
@@ -20,7 +20,7 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences
 internal lateinit var plugin: JavaPlugin; private set
 internal lateinit var messages: Messages; private set
 internal lateinit var mainDB: SatchelStorage; private set
-internal lateinit var config: ConfigInterface; private set
+internal lateinit var config: Config; private set
 internal lateinit var playerDB: SatchelStorage; private set
 internal lateinit var audiences: BukkitAudiences; private set
 internal lateinit var conversation: ConversationFactory; private set
@@ -29,7 +29,7 @@ internal lateinit var apiServer: NettyApplicationEngine; private set
 internal val log = Logger
 internal var apiPort = 5000; private set
 internal val server = Bukkit.getServer()
-internal val subCommands: HashMap<String, SubCommandsInterface> = Commands.subCommands
+internal val subCommands: HashMap<String, SubCommand> = Commands.subCommands
 
 fun loadPlugin(internal: JavaPlugin) {
     /* JavaPlugin */
