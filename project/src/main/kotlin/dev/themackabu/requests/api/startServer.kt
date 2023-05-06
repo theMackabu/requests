@@ -20,6 +20,7 @@ import dev.themackabu.requests.api.routes.playerInfo
 import dev.themackabu.requests.api.routes.serverInfo
 import dev.themackabu.requests.api.routes.serverIcon
 import dev.themackabu.requests.api.routes.serverWorlds
+import dev.themackabu.requests.models.api.ApiException
 
 fun startServer(port: Int): NettyApplicationEngine {
     val server = embeddedServer(Netty, port = port) {
@@ -61,6 +62,15 @@ fun startServer(port: Int): NettyApplicationEngine {
                     code = 500,
                     error = "server.unauthorized",
                     message = "$status"
+                ))
+            }
+
+            exception<ApiException> { call, cause ->
+                call.response.status(HttpStatusCode.InternalServerError)
+                call.respond(Response(
+                    code = cause.code,
+                    error = cause.error,
+                    message = cause.message
                 ))
             }
 
