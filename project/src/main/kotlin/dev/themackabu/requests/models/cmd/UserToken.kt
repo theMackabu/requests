@@ -11,7 +11,7 @@ data class UserToken(
 @Serializable
 data class ResponseContext(
     val name: String,
-    val uuid: String
+    val uuid: String?
 )
 
 @Serializable

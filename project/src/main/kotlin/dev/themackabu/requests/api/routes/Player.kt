@@ -18,10 +18,11 @@ fun playerInfo(call: ApplicationCall): Any {
     val info = call.principal<UserIdPrincipal>()!!.name
     
     return try {
-        AuthenticatedResponse<PlayerInfo?>(
+        val player = getPlayer(uuid as String) ?: throw NullPointerException("player does not exist")
+        AuthenticatedResponse(
             code = 200,
             response = info.fromJson<ResponseContext>(),
-            data = getPlayer(uuid as String)
+            data = player
         )
     } catch (e: NullPointerException) {
         call.response.status(HttpStatusCode.NotFound)

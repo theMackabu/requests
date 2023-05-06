@@ -12,7 +12,7 @@ import dev.themackabu.requests.models.cmd.ResponseContext
 
 fun getMasterToken(): String? = mainDB.get<String>("token.master")
 fun getUserToken(token: String): String? = mainDB.get<String>("token.$token")
-fun responseData(name: String, uuid: String): String = ResponseContext(name, uuid).toJson()
+fun responseData(name: String, uuid: String?): String = ResponseContext(name, uuid).toJson()
 
 fun getUserInfo(token: String): UserIdPrincipal? {
      mainDB.apply {
@@ -32,7 +32,7 @@ fun getUserInfo(token: String): UserIdPrincipal? {
 
 fun checkToken(token: String): UserIdPrincipal? {
     return if (token == getMasterToken()) {
-        UserIdPrincipal(responseData("master.console.user", "no-uuid-for-master-tolen"))
+        UserIdPrincipal(responseData("master.console.user", null))
     } else {
         getUserInfo(token)
     }

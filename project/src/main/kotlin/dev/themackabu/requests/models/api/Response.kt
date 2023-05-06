@@ -3,7 +3,6 @@ package dev.themackabu.requests.models.api
 import kotlinx.serialization.*
 import kotlinx.serialization.encoding.*
 import kotlinx.serialization.descriptors.*
-
 import dev.themackabu.requests.models.cmd.ResponseContext
 
 @Serializable
@@ -14,46 +13,25 @@ data class Response(
 )
 
 @Serializable
-data class AuthenticatedResponse<T>(
+@OptIn(ExperimentalSerializationApi::class)
+data class AuthenticatedResponse(
     val code: Int,
     val response: ResponseContext,
-    val data: T
+    @Serializable(with = DynamicLookupSerializer::class) val data: Any?
 )
 
-//class DataSerializer<T>(
-//    private val dataSerializer: KSerializer<T>
-//): KSerializer<AuthenticatedResponse<T>> {
-//    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("AuthenticatedResponse") {
-//        element("code", dataSerializer.descriptor)
-//        element("response", dataSerializer.descriptor)
-//        element("data", dataSerializer.descriptor)
-//    }
-//
-//    override fun serialize(encoder: Encoder, value: AuthenticatedResponse<T>) {
-//        val compositeOutput = encoder.beginStructure(descriptor)
-//        compositeOutput.encodeSerializableElement(descriptor, 2, dataSerializer, value.data)
-//        compositeOutput.endStructure(descriptor)
-//    }
-//
-//    override fun deserialize(decoder: Decoder): AuthenticatedResponse<T> {
-//        var code: Int? = null
-//        var response: ResponseContext? = null
-//        var data: T? = null
-//
-//        val compositeInput = decoder.beginStructure(descriptor)
-//        loop@ while (true) {
-//            when (val index = compositeInput.decodeElementIndex(descriptor)) {
-//                CompositeDecoder.DECODE_DONE -> break@loop
-//                2 -> data = compositeInput.decodeSerializableElement(descriptor, index, dataSerializer)
-//                else -> throw SerializationException("Unknown index $index")
-//            }
-//        }
-//        compositeInput.endStructure(descriptor)
-//
-//        return AuthenticatedResponse(
-//            code ?: throw SerializationException("Missing code"),
-//            response ?: throw SerializationException("Missing response"),
-//            data ?: throw SerializationException("Missing data")
-//        )
-//    }
-//}
+@Suppress("UNCHECKED_CAST")
+@ExperimentalSerializationApi
+@OptIn(InternalSerializationApi::class)
+class DynamicLookupSerializer: KSerializer<Any> {
+    override val descriptor: SerialDescriptor = ContextualSerializer(Any::class, null, emptyArray()).descriptor
+
+    override fun serialize(encoder: Encoder, value: Any) {
+        val actualSerializer = encoder.serializersModule.getContextual(value::class) ?: value::class.serializer()
+        encoder.encodeSerializableValue(actualSerializer as KSerializer<Any>, value)
+    }
+
+    override fun deserialize(decoder: Decoder): Any {
+        error("Unsupported")
+    }
+}
