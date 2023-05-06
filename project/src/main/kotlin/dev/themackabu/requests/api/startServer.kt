@@ -32,7 +32,7 @@ fun startServer(port: Int): NettyApplicationEngine {
 
         install(Authentication) {
             bearer {
-                authenticate { tokenCredential -> checkToken(tokenCredential) }
+                authenticate { tokenCredential -> checkToken(tokenCredential.token) }
             }
         }
 

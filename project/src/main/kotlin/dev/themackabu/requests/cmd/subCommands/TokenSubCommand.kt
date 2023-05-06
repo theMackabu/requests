@@ -1,17 +1,15 @@
 package dev.themackabu.requests.cmd.subCommands
 
-import java.util.Base64
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import java.security.SecureRandom
 import dev.themackabu.requests.mainDB
-import kotlinx.serialization.json.Json
 import org.bukkit.conversations.Prompt
 import dev.themackabu.requests.messages
 import org.bukkit.command.CommandSender
 import dev.themackabu.requests.conversation
-import kotlinx.serialization.encodeToString
-import com.aventrix.jnanoid.jnanoid.NanoIdUtils
+import dev.themackabu.requests.helpers.nanoid
+import dev.themackabu.requests.helpers.toJson
+import dev.themackabu.requests.helpers.toBase64
 import dev.themackabu.requests.models.cmd.UserToken
 import org.bukkit.conversations.ConversationContext
 import dev.themackabu.requests.models.cmd.SubCommand
@@ -21,9 +19,10 @@ fun generateToken(player: Player): UserToken {
     return UserToken(
         name = player.name,
         uuid = player.uniqueId.toString(),
-        token = NanoIdUtils.randomNanoId()
+        token = nanoid()
     )
 }
+
 
 class TokenSubCommand: SubCommand(
     name = "token",
@@ -38,15 +37,12 @@ class TokenSubCommand: SubCommand(
             when (sender) {
                 is Player -> {
                     val player: Player = sender
-                    val token = generateToken(player)
-                    val tokenStorage = TokenStorage(
-                        token = Base64.getEncoder().encodeToString(Json.encodeToString(token).toByteArray()),
-                        uses = 0
-                    )
+                    val tokenStorage = TokenStorage(uses = 0).toJson()
+                    val token = generateToken(player).toJson().toBase64()
 
                     val message = messages.getMessage(
                         "commands", "generate-token",
-                        hashMapOf("%token%" to tokenStorage.token),
+                        hashMapOf("%token%" to token),
                         addPrefix = false
                     )
 
@@ -58,7 +54,7 @@ class TokenSubCommand: SubCommand(
                         override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
                             if (input.equals("y", ignoreCase = true) || input.equals("yes", ignoreCase = true)) {
                                 messages.sendMessage(sender, message)
-                                mainDB.apply { set("token.${player.uniqueId}", Json.encodeToString(tokenStorage)) }
+                                mainDB.apply { set("token.${token}", tokenStorage) }
                             } else { messages.send(sender, "<grey>Aborting...") }
                             return null
                         }
@@ -66,7 +62,7 @@ class TokenSubCommand: SubCommand(
 
                     mainDB.apply {
                         when {
-                            contains("token.${player.uniqueId}") -> {
+                            contains("token.${token}") -> {
                                 conversation.withFirstPrompt(prompt)
                                     .withLocalEcho(false)
                                     .withTimeout(30)
@@ -76,14 +72,13 @@ class TokenSubCommand: SubCommand(
                             }
                         else -> {
                             messages.sendMessage(sender, message)
-                            mainDB.apply { set("token.${player.uniqueId}", Json.encodeToString(tokenStorage)) }
+                            mainDB.apply { set("token.${token}", tokenStorage) }
                         }}
                     }
                 }
                 else -> {
                     val consoleSender = Bukkit.getConsoleSender()
-                    val chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()
-                    val masterToken = NanoIdUtils.randomNanoId(SecureRandom(), chars, 35)
+                    val masterToken = nanoid(50, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
                     val placeholders: HashMap<String, String> = hashMapOf("%token%" to masterToken)
                     val message = messages.getMessage("commands", "console-generate-token", placeholders, addPrefix = false)
 

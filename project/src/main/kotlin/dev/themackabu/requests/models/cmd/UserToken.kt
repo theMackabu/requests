@@ -9,7 +9,4 @@ data class UserToken (
 )
 
 @Serializable
-data class TokenStorage (
-    val token: String,
-    val uses: Int
-)
+data class TokenStorage (val uses: Int?)
