@@ -7,8 +7,9 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.decodeFromString
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils
 
-inline fun <reified T> T.toJson(): String = Json.encodeToString(this)
-inline fun <reified T> String.fromJson(): T = Json.decodeFromString(this)
+val json = Json { allowStructuredMapKeys = true }
+inline fun <reified T> T.toJson(): String = json.encodeToString(this)
+inline fun <reified T> String.fromJson(): T = json.decodeFromString(this)
 
 fun nanoid(
     length: Int = 21,

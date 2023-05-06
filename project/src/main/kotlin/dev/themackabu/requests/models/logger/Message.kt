@@ -2,7 +2,7 @@ package dev.themackabu.requests.models.logger
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Message (
+data class Message(
     val timestamp: String,
     val status: Int,
     val path: String,
@@ -10,4 +10,4 @@ data class Message (
     val userAgent: String
 )
 
-data class Config (var path: String)
+data class Config(var path: String)

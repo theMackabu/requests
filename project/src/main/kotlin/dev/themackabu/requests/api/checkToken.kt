@@ -8,9 +8,11 @@ import dev.themackabu.requests.helpers.fromJson
 import dev.themackabu.requests.helpers.fromBase64
 import dev.themackabu.requests.models.cmd.UserToken
 import dev.themackabu.requests.models.cmd.TokenStorage
+import dev.themackabu.requests.models.cmd.ResponseContext
 
 fun getMasterToken(): String? = mainDB.get<String>("token.master")
 fun getUserToken(token: String): String? = mainDB.get<String>("token.$token")
+fun responseData(name: String, uuid: String): String = ResponseContext(name, uuid).toJson()
 
 fun getUserInfo(token: String): UserIdPrincipal? {
      mainDB.apply {
@@ -20,7 +22,7 @@ fun getUserInfo(token: String): UserIdPrincipal? {
                 val uses = getUserToken(token)?.fromJson<TokenStorage>()?.uses
 
                 set("token.$token", TokenStorage(uses?.plus(1)).toJson())
-                UserIdPrincipal("${tokenHolder.name}.${tokenHolder.uuid}")
+                UserIdPrincipal(responseData(tokenHolder.name, tokenHolder.uuid))
             } else -> {
                 null
             }
@@ -30,7 +32,7 @@ fun getUserInfo(token: String): UserIdPrincipal? {
 
 fun checkToken(token: String): UserIdPrincipal? {
     return if (token == getMasterToken()) {
-        UserIdPrincipal("console.user")
+        UserIdPrincipal(responseData("master.console.user", "no-uuid-for-master-tolen"))
     } else {
         getUserInfo(token)
     }

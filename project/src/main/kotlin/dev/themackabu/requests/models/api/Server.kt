@@ -2,7 +2,7 @@ package dev.themackabu.requests.models.api
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Server (
+data class Server(
     val name: String,
     val motd: String,
     val onlineMode: Boolean,
@@ -15,7 +15,7 @@ data class Server (
 )
 
 @Serializable
-data class Players (
+data class Players(
     val allowFlight: Boolean,
     val isWhitelist: Boolean,
     val defautGamemode: String,
@@ -25,13 +25,13 @@ data class Players (
 )
 
 @Serializable
-data class PlayerCount (
+data class PlayerCount(
     val online: Int,
     val max: Int
 )
 
 @Serializable
-data class Health (
+data class Health(
     val cpuCount: Int,
     val uptime: Long,
     val warningState: String,
@@ -40,21 +40,21 @@ data class Health (
 )
 
 @Serializable
-data class Tps (
+data class Tps(
     val oneMinute: Double,
     val fiveMinutes: Double,
     val fifteenMinutes: Double
 )
 
 @Serializable
-data class Memory (
+data class Memory(
     val totalMemory: Long,
     val maxMemory: Long,
     val freeMemory: Long
 )
 
 @Serializable
-data class Dimension (
+data class Dimension(
     val defaultType: String,
     val allowNether: Boolean,
     val allowEnd: Boolean

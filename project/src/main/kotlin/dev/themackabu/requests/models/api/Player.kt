@@ -2,7 +2,7 @@ package dev.themackabu.requests.models.api
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PlayerInfo (
+data class PlayerInfo(
     val uuid: String,
     val username: String,
     val level: Int,
@@ -12,7 +12,7 @@ data class PlayerInfo (
 )
 
 @Serializable
-data class PlayerHealth (
+data class PlayerHealth(
     val max: Double?,
     val current: Double,
     val percent: Double,
@@ -20,6 +20,6 @@ data class PlayerHealth (
 )
 
 @Serializable
-data class PlayerStatus (
+data class PlayerStatus(
     val online: Boolean
 )
