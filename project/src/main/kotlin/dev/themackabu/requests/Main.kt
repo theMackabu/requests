@@ -11,6 +11,7 @@ import dev.themackabu.requests.helpers.player.dataListener
 import org.bukkit.Bukkit
 import org.apache.logging.log4j.Level
 import org.bukkit.plugin.java.JavaPlugin
+import com.jeff_media.jefflib.JeffLib
 import cafe.adriel.satchel.SatchelStorage
 import io.ktor.server.netty.NettyApplicationEngine
 import org.bukkit.conversations.ConversationFactory
@@ -62,6 +63,9 @@ class Main: JavaPlugin() {
 
         /* init token DB */
         mainDB["token."] = ""
+
+        /* start nms */
+        JeffLib.enableNMS()
 
         /* register commands */
         this.getCommand("api")?.setExecutor(Commands())

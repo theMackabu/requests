@@ -20,6 +20,7 @@ if (pluginAPIVersion.isEmpty()) {
 
 plugins {
     kotlin("jvm") version "1.8.21"
+    id("io.papermc.paperweight.userdev") version "1.5.3"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
     application
@@ -31,6 +32,7 @@ repositories {
     maven("https://jitpack.io")
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    maven("https://hub.jeff-media.com/nexus/repository/jeff-media-public/")
 }
 
 dependencies {
@@ -54,7 +56,15 @@ dependencies {
     implementation("com.aventrix.jnanoid:jnanoid:2.0.0")
     implementation("com.github.simplix-softworks:simplixstorage:3.2.5")
     compileOnly(group = "me.clip", name = "placeholderapi", version = "2.11.1")
-    compileOnly("io.papermc.paper:paper-api:$pluginAPIVersion-R0.1-SNAPSHOT")
+    //compileOnly("io.papermc.paper:paper-api:$pluginAPIVersion-R0.1-SNAPSHOT")
+    implementation("io.netty:netty-all:4.1.66.Final")
+    implementation("net.kyori:adventure-text-serializer-legacy:4.13.1")
+    implementation("net.kyori:adventure-text-serializer-gson:4.13.1")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.0")
+    implementation("net.kyori:adventure-text-minimessage:4.13.1")
+    implementation("com.jeff_media:JeffLib:12.3.0")
+    paperweight.paperDevBundle("$pluginAPIVersion-R0.1-SNAPSHOT")
+
 
     val dependenciesFolder = File("${projectDir.absolutePath}/dependencies")
     dependenciesFolder.listFiles()?.filter { it.absolutePath.endsWith(".jar") }?.forEach {

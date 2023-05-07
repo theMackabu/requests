@@ -5,7 +5,7 @@ import io.ktor.server.auth.*
 import javax.imageio.ImageIO
 import dev.themackabu.requests.server
 import dev.themackabu.requests.plugin
-import dev.themackabu.requests.messages
+import com.jeff_media.jefflib.ServerUtils
 import dev.themackabu.requests.models.api.Tps
 import java.lang.management.ManagementFactory
 import dev.themackabu.requests.helpers.fromJson
@@ -23,7 +23,7 @@ fun serverInfo(call: ApplicationCall): AuthenticatedResponse<Server> {
     val info = call.principal<UserIdPrincipal>()!!.name
     val server =  Server(
       name = server.name,
-      motd = messages.toLegacyString(server.motd()),
+      motd = server.motd,
       onlineMode = server.onlineMode,
       version = server.version,
       bukkitVersion = server.bukkitVersion,
@@ -44,9 +44,9 @@ fun serverInfo(call: ApplicationCall): AuthenticatedResponse<Server> {
           uptime = ManagementFactory.getRuntimeMXBean().uptime / 1000L,
           warningState = server.warningState.toString(),
           tps = Tps(
-              oneMinute = server.tps[0],
-              fiveMinutes = server.tps[1],
-              fifteenMinutes = server.tps[2]
+              oneMinute = ServerUtils.getTps().getLast1Minute(),
+              fiveMinutes = ServerUtils.getTps().getLast5Minute(),
+              fifteenMinutes = ServerUtils.getTps().getLast15Minute()
           ),
           memory = Memory(
               totalMemory = Runtime.getRuntime().maxMemory(),
