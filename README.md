@@ -53,7 +53,7 @@ To generate an player API key, use the following command in game:
 
 To authenticate a request, include the API key in the `Authorization` header of the HTTP request:
 
-```js
+```bash
 Authorization: Bearer <api_key>
 ```
 
@@ -81,7 +81,7 @@ Sends a command to the Minecraft server. This route can be used by admin token o
 
 #### Get server status
 
-```
+```bash
 GET /server HTTP/.1
 Authorization: Bearer <api_key>
 User-Agent: Example Agent/0.0.1
@@ -89,7 +89,7 @@ User-Agent: Example Agent/0.0.1
 
 #### Get player profile
 
-```
+```bash
 GET /player/<uniqueId> HTTP/1.1
 Authorization: Bearer <api_key>
 User-Agent: Example Agent/0.0.1
@@ -97,7 +97,7 @@ User-Agent: Example Agent/0.0.1
 
 #### Send command
 
-```
+```bash
 POST /command HTTP/1.1
 Authorization: Bearer <api_key>
 Content-Type: application/json; charset=utf-8
