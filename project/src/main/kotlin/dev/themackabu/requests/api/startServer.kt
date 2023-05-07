@@ -14,13 +14,13 @@ import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.doublereceive.*
 import io.ktor.server.plugins.defaultheaders.*
 import dev.themackabu.requests.helpers.FileLogger
-import dev.themackabu.requests.models.api.Response
 import io.ktor.server.plugins.contentnegotiation.*
 import dev.themackabu.requests.api.routes.playerInfo
 import dev.themackabu.requests.api.routes.serverInfo
 import dev.themackabu.requests.api.routes.serverIcon
 import dev.themackabu.requests.api.routes.serverWorlds
 import dev.themackabu.requests.models.api.ApiException
+
 
 fun startServer(port: Int): NettyApplicationEngine {
     val server = embeddedServer(Netty, port = port) {
@@ -32,63 +32,22 @@ fun startServer(port: Int): NettyApplicationEngine {
         install(CORS) { anyHost() }
 
         install(Authentication) {
-            bearer {
-                authenticate { tokenCredential -> checkToken(tokenCredential.token) }
-            }
+            bearer { authenticate { tokenCredential -> checkToken(tokenCredential.token) } }
         }
 
         install(StatusPages) {
-            status(HttpStatusCode.Unauthorized) { call, status ->
-                call.response.status(HttpStatusCode.Unauthorized)
-                call.respond(Response(
-                    code = 401,
-                    error = "server.unauthorized",
-                    message = "$status"
-                ))
-            }
-
-            status(HttpStatusCode.Forbidden) { call, status ->
-                call.response.status(HttpStatusCode.Forbidden)
-                call.respond(Response(
-                    code = 403,
-                    error = "server.forbidden",
-                    message = "$status"
-                ))
-            }
-
-            status(HttpStatusCode.InternalServerError) { call, status ->
-                call.response.status(HttpStatusCode.InternalServerError)
-                call.respond(Response(
-                    code = 500,
-                    error = "server.unauthorized",
-                    message = "$status"
-                ))
-            }
-
-            exception<ApiException> { call, cause ->
-                call.response.status(HttpStatusCode.InternalServerError)
-                call.respond(Response(
-                    code = cause.code,
-                    error = cause.error,
-                    message = cause.message
-                ))
-            }
-
-            exception<Throwable> { call, cause ->
-                call.response.status(HttpStatusCode.InternalServerError)
-                call.respond(Response(
-                    code = 500,
-                    error = "server.exception",
-                    message = "$cause"
-                ))
-            }
+            exception<Throwable> { call, cause -> serverError(call, cause) }
+            exception<ApiException> { call, cause -> apiError(call, cause) }
+            status(HttpStatusCode.Unauthorized) { call, status -> unauthorizedPage(call, status) }
+            status(HttpStatusCode.Forbidden) { call, status -> forbiddenPage(call, status) }
+            status(HttpStatusCode.InternalServerError) { call, status -> serverErrorPage(call, status) }
         }
 
         routing {
             authenticate {
                 get("/players/{uuid}") { call.respond(playerInfo(call)) }
-                get("/server") { call.respond(serverInfo()) }
-                get("/server/worlds") { call.respond(serverWorlds()) }
+                get("/server") { call.respond(serverInfo(call)) }
+                get("/server/worlds") { call.respond(serverWorlds(call)) }
                 get("/server/icon") { call.respondFile(serverIcon()) }
             }
         }

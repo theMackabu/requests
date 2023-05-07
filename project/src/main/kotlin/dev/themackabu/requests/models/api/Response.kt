@@ -12,26 +12,30 @@ data class Response(
     val message: String?
 )
 
-@Serializable
-@OptIn(ExperimentalSerializationApi::class)
-data class AuthenticatedResponse(
+@Serializable(with = DataSerializer::class)
+data class AuthenticatedResponse<T>(
     val code: Int,
     val response: ResponseContext,
-    @Serializable(with = DynamicLookupSerializer::class) val data: Any?
+    val data: T
 )
 
-@Suppress("UNCHECKED_CAST")
-@ExperimentalSerializationApi
-@OptIn(InternalSerializationApi::class)
-class DynamicLookupSerializer: KSerializer<Any> {
-    override val descriptor: SerialDescriptor = ContextualSerializer(Any::class, null, emptyArray()).descriptor
 
-    override fun serialize(encoder: Encoder, value: Any) {
-        val actualSerializer = encoder.serializersModule.getContextual(value::class) ?: value::class.serializer()
-        encoder.encodeSerializableValue(actualSerializer as KSerializer<Any>, value)
+class DataSerializer<T>(private val dataSerializer: KSerializer<T>): KSerializer<AuthenticatedResponse<T>> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("AuthenticatedResponse") {
+        element<Int>("code")
+        element<ResponseContext>("response")
+        element("data", dataSerializer.descriptor)
     }
 
-    override fun deserialize(decoder: Decoder): Any {
+    override fun serialize(encoder: Encoder, value: AuthenticatedResponse<T>) {
+        val compositeOutput = encoder.beginStructure(descriptor)
+        compositeOutput.encodeIntElement(descriptor, 0, value.code)
+        compositeOutput.encodeSerializableElement(descriptor, 1, ResponseContext.serializer(), value.response)
+        compositeOutput.encodeSerializableElement(descriptor, 2, dataSerializer, value.data)
+        compositeOutput.endStructure(descriptor)
+    }
+
+    override fun deserialize(decoder: Decoder): AuthenticatedResponse<T> {
         error("Unsupported")
     }
 }
