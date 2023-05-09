@@ -118,4 +118,4 @@ To build Requests from source, follow these steps:
 
 ## License
 
-Requests is licensed under the [GPL-3 License](https://github.com/themackabu/requests/blob/main/LICENSE).
+Requests is licensed under the [GPL-3 License](https://github.com/themackabu/requests/blob/main/LICENSE.md).
