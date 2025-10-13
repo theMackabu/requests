@@ -122,12 +122,12 @@ User-Agent: Example Agent/0.0.1
 
 ```bash
 POST /command HTTP/1.1
-Authorization: Bearer <api_key>
-Content-Type: application/json; charset=utf-8
+Authorization: Bearer <master_key>
+Content-Type: text/plain; charset=utf-8
 User-Agent: Example Agent/0.0.1
-Content-Length: 31
+Content-Length: 17
 
-{"command":"say Hello, World!"}
+say Hello, World!
 ```
 
 ## Build

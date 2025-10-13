@@ -28,7 +28,7 @@ suspend fun serverErrorPage(call: ApplicationCall, status: HttpStatusCode) {
     call.response.status(HttpStatusCode.InternalServerError)
     call.respond(Response(
         code = 500,
-        error = "server.unauthorized",
+        error = "server.exception",
         message = "$status"
     ))
 }

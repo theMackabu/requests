@@ -6,13 +6,15 @@ import dev.themackabu.requests.models.cmd.SubCommand
 import dev.themackabu.requests.cmd.subCommands.HelpSubCommand
 import dev.themackabu.requests.cmd.subCommands.ReloadSubCommand
 import dev.themackabu.requests.cmd.subCommands.TokenSubCommand
+import dev.themackabu.requests.cmd.subCommands.GenerateMasterSubCommand
 
 class Commands: CommandExecutor, TabCompleter {
     companion object {
         val subCommands: HashMap<String, SubCommand> = hashMapOf(
             "help" to HelpSubCommand(),
             "reload" to ReloadSubCommand(),
-            "token" to TokenSubCommand()
+            "token" to TokenSubCommand(),
+            "generate-master" to GenerateMasterSubCommand()
         )
     }
 
