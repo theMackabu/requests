@@ -1,29 +1,35 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-var pluginMainClass = ""
-var pluginName = ""
-var pluginAPIVersion = ""
+version = System.getenv("PLUGIN_VERSION")
+description = "HTTP api for your minecraft server"
 
-File("${projectDir.absoluteFile}/src/main/resources/plugin.yml").forEachLine { line ->
-    with(line) {
-        when {
-            matches(Regex("^version: .+$")) -> project.version = replace(Regex("version: "), "").replace("\"", "").replace("'", "")
-            matches(Regex("^name: .+$")) -> pluginName = replace(Regex("name: "), "").replace("\"", "").replace("'", "")
-            matches(Regex("^main: .+$")) -> pluginMainClass = replace(Regex("main: "), "").replace("\"", "").replace("'", "")
-            matches(Regex("^api-version: .+$")) -> pluginAPIVersion = replace(Regex("api-version: "), "").replace("\"", "").replace("'", "")
+val apiVersion = System.getenv("API_VERSION")
+val pluginMainClass = "dev.themackabu.requests.Entry"
+
+bukkit {
+    main = pluginMainClass
+    name = rootProject.name
+    apiVersion = System.getenv("API_VERSION")
+
+    foliaSupported = true
+    author = "theMackabu"
+    
+    commands {
+        register("api") {
+            usage = "/api <command>"
+            permission = "requests.api.use"
+            description = "Requests plugin (token/reload)"
         }
     }
 }
-if (pluginAPIVersion.isEmpty()) {
-    pluginAPIVersion = "1.19"
-}
 
 plugins {
-    kotlin("jvm") version "1.8.21"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
-    application
-    java
+    java    
+    kotlin("jvm") version "2.2.20"
+    id("com.gradleup.shadow") version "9.2.2"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.2.20"
+    id("com.github.ben-manes.versions") version "0.53.0"
+    id("de.eldoria.plugin-yml.bukkit") version "0.8.0"
 }
 
 repositories {
@@ -34,27 +40,41 @@ repositories {
 }
 
 dependencies {
-    implementation("org.apache.logging.log4j:log4j-slf4j18-impl:2.13.3")
-    implementation("org.apache.logging.log4j:log4j-api:2.13.3")
-    implementation("org.apache.logging.log4j:log4j-core:2.13.3")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-    implementation("io.ktor:ktor-server-content-negotiation-jvm:2.3.0")
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.0")
-    implementation("io.ktor:ktor-server-core-jvm:2.3.0")
-    implementation("io.ktor:ktor-server-double-receive-jvm:2.3.0")
-    implementation("io.ktor:ktor-server-cors-jvm:2.3.0")
-    implementation("io.ktor:ktor-server-netty-jvm:2.3.0")
-    implementation("io.ktor:ktor-server-auth-jvm:2.3.0")
-    implementation("io.ktor:ktor-server-status-pages-jvm:2.3.0")
-    implementation("io.ktor:ktor-server-default-headers-jvm:2.3.0")
+    implementation("org.apache.logging.log4j:log4j-slf4j18-impl:2.18.0")
+    implementation("org.apache.logging.log4j:log4j-api:2.18.0")
+    implementation("org.apache.logging.log4j:log4j-core:2.18.0")
+    
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.2.20")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+    
+    // implementation("io.ktor:ktor-server-content-negotiation-jvm:2.3.0")
+    // implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.0")
+    // implementation("io.ktor:ktor-server-core-jvm:2.3.0")
+    // implementation("io.ktor:ktor-server-double-receive-jvm:2.3.0")
+    // implementation("io.ktor:ktor-server-cors-jvm:2.3.0")
+    // implementation("io.ktor:ktor-server-netty-jvm:2.3.0")
+    // implementation("io.ktor:ktor-server-auth-jvm:2.3.0")
+    // implementation("io.ktor:ktor-server-status-pages-jvm:2.3.0")
+    // implementation("io.ktor:ktor-server-default-headers-jvm:2.3.0")
+    
+    implementation("io.ktor:ktor-server-content-negotiation-jvm:3.3.1")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:3.3.1")
+    implementation("io.ktor:ktor-server-core-jvm:3.3.1")
+    implementation("io.ktor:ktor-server-double-receive-jvm:3.3.1")
+    implementation("io.ktor:ktor-server-cors-jvm:3.3.1")
+    implementation("io.ktor:ktor-server-netty-jvm:3.3.1")
+    implementation("io.ktor:ktor-server-auth-jvm:3.3.1")
+    implementation("io.ktor:ktor-server-status-pages-jvm:3.3.1")
+    implementation("io.ktor:ktor-server-default-headers-jvm:3.3.1")
+    
     implementation("com.github.adrielcafe.satchel:satchel-core:1.0.3")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.4.1")
     implementation("com.aventrix.jnanoid:jnanoid:2.0.0")
-    implementation("com.github.simplix-softworks:simplixstorage:3.2.5")
-    compileOnly(group = "me.clip", name = "placeholderapi", version = "2.11.1")
-    compileOnly("io.papermc.paper:paper-api:$pluginAPIVersion-R0.1-SNAPSHOT")
+    implementation("com.github.simplix-softworks:simplixstorage:3.2.7")
+    
+    compileOnly("me.clip:placeholderapi:2.11.6")
+    compileOnly("io.papermc.paper:paper-api:${System.getenv("API_VERSION")}-R0.1-SNAPSHOT")
 
     val dependenciesFolder = File("${projectDir.absolutePath}/dependencies")
     dependenciesFolder.listFiles()?.filter { it.absolutePath.endsWith(".jar") }?.forEach {
@@ -63,30 +83,33 @@ dependencies {
     }
 }
 
-application {
-    mainClass.set(pluginMainClass)
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = javaVersion().replace("^8$".toRegex(), "1.8")
-    }
-}
-
-java {
-    sourceCompatibility = JavaVersion.valueOf("VERSION_${javaVersion().replace("^8$".toRegex(), "1_8")}")
-    targetCompatibility = JavaVersion.valueOf("VERSION_${javaVersion().replace("^8$".toRegex(), "1_8")}")
+    compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21) }
 }
 
 tasks.withType<Jar> {
-    archiveFileName.set("$pluginName-${project.version}.jar")
-    manifest {
-        attributes["Main-Class"] = pluginMainClass
-    }
+    archiveFileName.set("${rootProject.name}-${project.version}.jar")
+    manifest { attributes["Main-Class"] = pluginMainClass }
 }
 
 tasks.withType<ShadowJar> {
-    archiveFileName.set("$pluginName-${project.version}-all.jar")
+    archiveFileName.set("${rootProject.name}-${project.version}-all.jar")
+    
+    relocate("kotlin", "dev.themackabu.requests.shaded.kotlin")
+    relocate("kotlinx", "dev.themackabu.requests.shaded.kotlinx")
+    relocate("io.ktor", "dev.themackabu.requests.shaded.ktor")
+    relocate("com.aventrix.jnanoid", "dev.themackabu.requests.shaded.jnanoid")
+    relocate("com.github.adrielcafe.satchel", "dev.themackabu.requests.shaded.satchel")
+    relocate("de.leonhard.storage", "dev.themackabu.requests.shaded.simplixstorage")
+    
+    exclude("META-INF/*.SF")
+    exclude("META-INF/*.DSA")
+    exclude("META-INF/*.RSA")
+    
+    mergeServiceFiles()
 }
-
-fun javaVersion() = "17"

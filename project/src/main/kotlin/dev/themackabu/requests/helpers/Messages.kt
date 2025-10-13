@@ -1,7 +1,6 @@
 package dev.themackabu.requests.helpers
 
 import java.io.File
-import org.bukkit.ChatColor
 import de.leonhard.storage.Toml
 import dev.themackabu.requests.log
 import dev.themackabu.requests.plugin
@@ -17,8 +16,7 @@ class Messages(path: String) {
     private val file = File(plugin.dataFolder.absolutePath + File.separator + path)
     private var messages = Toml(file)
     private val mm = MiniMessage.miniMessage()
-
-    
+        
     fun getMessage(scope: String, key: String, placeholders: HashMap<String, String>?, addPrefix: Boolean = false): Component {
         @Suppress("UNCHECKED_CAST")
         val messages = this.messages.get(scope) as HashMap<String, String>
@@ -34,24 +32,23 @@ class Messages(path: String) {
 
         return mm.deserialize(message)
     }
-
+    
     fun send(sender: CommandSender, message: String) {
         audiences.sender(sender).sendMessage(mm.deserialize(message))
     }
-
+    
     fun sendMessage(sender: CommandSender, textComponent: Component) {
         audiences.sender(sender).sendMessage(textComponent)
     }
-
+    
     fun toString(message: String): String {
         return GsonComponentSerializer.gson().serialize(mm.deserialize(message))
     }
-
+    
     fun toLegacyString(textComponent: Component): String {
-        val legacy = LegacyComponentSerializer.legacyAmpersand().serialize(textComponent)
-        return ChatColor.translateAlternateColorCodes('&', legacy)
+        return LegacyComponentSerializer.legacyAmpersand().serialize(textComponent)
     }
-
+    
     private fun replacePlaceholders(message: String, placeholders: HashMap<String, String>): String {
         var newMessage = message
         for ((key, value) in placeholders) {

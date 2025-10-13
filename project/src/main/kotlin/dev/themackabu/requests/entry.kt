@@ -12,6 +12,7 @@ import org.bukkit.Bukkit
 import org.apache.logging.log4j.Level
 import org.bukkit.plugin.java.JavaPlugin
 import cafe.adriel.satchel.SatchelStorage
+import io.ktor.server.engine.EmbeddedServer
 import io.ktor.server.netty.NettyApplicationEngine
 import org.bukkit.conversations.ConversationFactory
 import org.apache.logging.log4j.core.config.Configurator
@@ -24,7 +25,7 @@ internal lateinit var config: Config; private set
 internal lateinit var playerDB: SatchelStorage; private set
 internal lateinit var audiences: BukkitAudiences; private set
 internal lateinit var conversation: ConversationFactory; private set
-internal lateinit var apiServer: NettyApplicationEngine; private set
+internal lateinit var apiServer: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>; private set
 
 internal val log = Logger
 internal var apiPort = 5000; private set
@@ -52,7 +53,7 @@ fun loadPlugin(internal: JavaPlugin) {
     apiServer = startServer(apiPort)
 }
 
-class Main: JavaPlugin() {
+class Entry: JavaPlugin() {
     override fun onEnable() {
         /* disable ktor.logger */
         Configurator.setLevel("ktor.application", Level.OFF)

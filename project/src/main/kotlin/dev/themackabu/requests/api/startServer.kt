@@ -1,5 +1,4 @@
 package dev.themackabu.requests.api
-
 import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.netty.*
@@ -21,8 +20,7 @@ import dev.themackabu.requests.api.routes.serverIcon
 import dev.themackabu.requests.api.routes.serverWorlds
 import dev.themackabu.requests.models.api.ApiException
 
-
-fun startServer(port: Int): NettyApplicationEngine {
+fun startServer(port: Int): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
     val server = embeddedServer(Netty, port = port) {
         install(DefaultHeaders)
         install(DoubleReceive)

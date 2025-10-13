@@ -2,9 +2,9 @@
 name = "requests"
 
 [env]
-version = "0.2.0"
-server = "1.21.8"
-flags = "--add-modules=jdk.incubator.vector -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20"
+API_VERSION = "1.21"
+PLUGIN_VERSION = "0.2.0"
+JDK_FLAGS = "--add-modules=jdk.incubator.vector -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20"
 
 [tasks.create_server]
 script = "scripts/init.sh"
@@ -13,10 +13,10 @@ script = "scripts/init.sh"
 script = [
   "gradle build",
   "rm -rf server/plugins/requests/",
-  "cp project/build/libs/requests-%{env.version}-all.jar server/plugins",
-  "tmux send 'reload confirm' ENTER;"
+  "cp project/build/libs/requests-%{env.PLUGIN_VERSION}-all.jar server/plugins",
+  "tmux send 'bukkit:reload confirm' ENTER;"
 ]
 
 [tasks.start]
 path = "server"
-script = ["tmux new-session -d -s mc_server_testing 'java -Xms4096M -Xmx4096M %{env.flags} -jar paper.jar --nogui'", "tmux a"]
+script = ["tmux new-session -d -s mc_server_testing 'java -Xms4096M -Xmx4096M %{env.JDK_FLAGS} -jar paper.jar --nogui'", "tmux a"]
