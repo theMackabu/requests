@@ -113,7 +113,7 @@ User-Agent: Example Agent/0.0.1
 #### Get player profile
 
 ```bash
-GET /player/<uniqueId> HTTP/1.1
+GET /players/<uniqueId> HTTP/1.1
 Authorization: Bearer <api_key>
 User-Agent: Example Agent/0.0.1
 ```
