@@ -30,6 +30,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "2.2.20"
     id("com.github.ben-manes.versions") version "0.53.0"
     id("de.eldoria.plugin-yml.bukkit") version "0.8.0"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
 }
 
 repositories {
@@ -40,6 +41,8 @@ repositories {
 }
 
 dependencies {
+    paperweight.paperDevBundle("${System.getenv("API_VERSION")}-R0.1-SNAPSHOT")
+    
     implementation("org.apache.logging.log4j:log4j-slf4j18-impl:2.18.0")
     implementation("org.apache.logging.log4j:log4j-api:2.18.0")
     implementation("org.apache.logging.log4j:log4j-core:2.18.0")
@@ -64,7 +67,6 @@ dependencies {
     implementation("com.github.simplix-softworks:simplixstorage:3.2.7")
     
     compileOnly("me.clip:placeholderapi:2.11.6")
-    compileOnly("io.papermc.paper:paper-api:${System.getenv("API_VERSION")}-R0.1-SNAPSHOT")
 
     val dependenciesFolder = File("${projectDir.absolutePath}/dependencies")
     dependenciesFolder.listFiles()?.filter { it.absolutePath.endsWith(".jar") }?.forEach {
@@ -101,3 +103,5 @@ tasks.withType<ShadowJar> {
     
     mergeServiceFiles()
 }
+
+paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.REOBF_PRODUCTION

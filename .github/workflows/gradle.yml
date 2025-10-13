@@ -22,7 +22,7 @@ jobs:
         run: gradle shadowJar
         env:
           API_VERSION: '1.21'
-          PLUGIN_VERSION: '0.2.0'
+          PLUGIN_VERSION: '0.3.0'
       - uses: actions/upload-artifact@v4
         with:
           name: built_jars

@@ -41,10 +41,10 @@ fun loadPlugin(internal: JavaPlugin) {
     config = config("config.toml")
     messages = Messages("messages.toml")
 
-    mainDB = database(if (config.database["tokens"] != null) config.database["tokens"] as String else "tokens.db")
-    playerDB = database(if (config.database["players"] != null) config.database["players"] as String else "players.db")
+    mainDB = database(config.database.tokens)
+    playerDB = database(config.database.players)
 
-    apiPort = if (config.database["port"] != null) (config.api["port"] as String).toInt() else 5000
+    apiPort = config.api.port
     apiServer = startServer(apiPort)
 }
 

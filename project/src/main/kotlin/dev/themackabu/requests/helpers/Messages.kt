@@ -28,7 +28,7 @@ class Messages(path: String) {
         }
 
         if (placeholders != null) message = this.replacePlaceholders(message, placeholders)
-        if (addPrefix) message = config.plugin["prefix"] + message
+        if (addPrefix) message = config.plugin.prefix + message
 
         return mm.deserialize(message)
     }

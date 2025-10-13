@@ -2,8 +2,8 @@ package dev.themackabu.requests
 
 import java.io.File
 import de.leonhard.storage.Toml
+import dev.themackabu.requests.models.config.*
 import dev.themackabu.requests.helpers.createFiles
-import dev.themackabu.requests.models.config.Config
 
 fun config(path: String): Config {
     createFiles()
@@ -13,10 +13,22 @@ fun config(path: String): Config {
     
     log.info("Loaded config $path")
 
-    @Suppress("UNCHECKED_CAST")
     return Config(
-        api = config.get("api") as? HashMap<String, String> ?: HashMap(),
-        plugin = config.get("plugin") as? HashMap<String, String> ?: HashMap(),
-        database = config.get("database") as? HashMap<String, String> ?: HashMap()
+        api = ApiConfig(
+            port = config.getInt("api.port"),
+            vault = config.getBoolean("api.vault"),
+            luckperms = config.getBoolean("api.luckperms"),
+            danger = DangerConfig(
+                remote_commands = config.getBoolean("api.danger.remote_commands")
+            )
+        ),
+        plugin = PluginConfig(
+            salt = config.getString("plugin.salt"),
+            prefix = config.getString("plugin.prefix")
+        ),
+        database = DatabaseConfig(
+            tokens = config.getString("database.tokens"),
+            players = config.getString("database.players")
+        )
     )
 }

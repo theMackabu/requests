@@ -18,6 +18,7 @@ import dev.themackabu.requests.api.routes.playerInfo
 import dev.themackabu.requests.api.routes.serverInfo
 import dev.themackabu.requests.api.routes.serverIcon
 import dev.themackabu.requests.api.routes.serverWorlds
+import dev.themackabu.requests.api.routes.executeCommand
 import dev.themackabu.requests.models.api.ApiException
 
 fun startServer(port: Int): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
@@ -47,6 +48,7 @@ fun startServer(port: Int): EmbeddedServer<NettyApplicationEngine, NettyApplicat
                 get("/server") { call.respond(serverInfo(call)) }
                 get("/server/worlds") { call.respond(serverWorlds(call)) }
                 get("/server/icon") { call.respondFile(serverIcon()) }
+                post("/command") { call.respond(executeCommand(call)) }
             }
         }
     }
