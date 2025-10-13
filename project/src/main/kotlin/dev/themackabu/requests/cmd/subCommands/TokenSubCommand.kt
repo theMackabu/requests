@@ -41,39 +41,42 @@ class TokenSubCommand: SubCommand(
                 addPrefix = false
             )
 
-            val prompt = object: Prompt {
-                override fun blocksForInput(context: ConversationContext): Boolean { return true }
-                override fun getPromptText(context: ConversationContext): String {
-                    return messages.toLegacyString(messages.getMessage("commands", "action-destructive", hashMapOf("%action%" to "generate a new token"), addPrefix = false))
-                }
-                override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
-                    if (input.equals("y", ignoreCase = true) || input.equals("yes", ignoreCase = true)) {
-                        messages.sendMessage(sender, message)
-                        mainDB["token.${token}"] = tokenStorage
-                    } else { messages.send(sender, "<grey>Aborting...") }
-                    return null
-                }
-            }
+            var existingKey: String? = null
 
             mainDB.keys.forEach { key ->
                 val split = key.split(".")[1].fromBase64()
                 val uniqueId = if (split != "") UUID.fromString(split.fromJson<UserToken>().uuid) else { null }
 
                 if (uniqueId == player.uniqueId) {
-                    mainDB.remove(key)
-                    conversation.withFirstPrompt(prompt)
-                        .withLocalEcho(false)
-                        .buildConversation(player)
-                        .begin()
-
-                    return
-                } else {
-                    mainDB.remove(key)
-                    messages.sendMessage(sender, message)
-                    mainDB["token.${token}"] = tokenStorage
-
-                    return
+                    existingKey = key
+                    return@forEach
                 }
+            }
+
+            if (existingKey != null) {
+                val prompt = object: Prompt {
+                    override fun blocksForInput(context: ConversationContext): Boolean { return true }
+                    override fun getPromptText(context: ConversationContext): String {
+                        messages.sendMessage(sender, messages.getMessage("commands", "action-destructive", hashMapOf("%action%" to "generate a new token"), addPrefix = false))
+                        return ""
+                    }
+                    override fun acceptInput(context: ConversationContext, input: String?): Prompt? {
+                        if (input.equals("y", ignoreCase = true) || input.equals("yes", ignoreCase = true)) {
+                            mainDB.remove(existingKey!!)
+                            messages.sendMessage(sender, message)
+                            mainDB["token.${token}"] = tokenStorage
+                        } else { messages.send(sender, "<grey>Aborting...") }
+                        return null
+                    }
+                }
+
+                conversation.withFirstPrompt(prompt)
+                    .withLocalEcho(false)
+                    .buildConversation(player)
+                    .begin()
+            } else {
+                messages.sendMessage(sender, message)
+                mainDB["token.${token}"] = tokenStorage
             }
         } else {
             val placeholders: HashMap<String, String> = hashMapOf("%argument%" to args[1], "%usage%" to usage)

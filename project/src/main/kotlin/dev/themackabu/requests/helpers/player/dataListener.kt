@@ -13,7 +13,7 @@ import dev.themackabu.requests.playerDB
 import kotlinx.serialization.encodeToString
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import org.bukkit.event.player.PlayerLoginEvent
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerExpChangeEvent
 import dev.themackabu.requests.models.api.PlayerInfo
@@ -59,7 +59,7 @@ class dataListener: Listener {
     @EventHandler
     fun onPlayerMove(event: PlayerMoveEvent) {debouncePlayerEvent(event.player)}
     @EventHandler
-    fun onPlayerLogin(event: PlayerLoginEvent) { debouncePlayerEvent(event.player) }
+    fun onPlayerJoin(event: PlayerJoinEvent) { debouncePlayerEvent(event.player) }
     @EventHandler
     fun onPlayerQuit(event: PlayerQuitEvent) { debouncePlayerEvent(event.player) }
     @EventHandler

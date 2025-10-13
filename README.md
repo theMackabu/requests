@@ -59,7 +59,7 @@ Requests uses API keys to authenticate requests. There are two types of tokens:
 To generate a master API key, use the following command in the server console:
 
 ```bash
-/api generate-master
+/api generate-master [force]
 ```
 
 The `<name>` parameter is optional and can be used to give the key a custom name. The generated API key will be displayed in the console.

@@ -17,6 +17,7 @@ import io.ktor.server.netty.NettyApplicationEngine
 import org.bukkit.conversations.ConversationFactory
 import org.apache.logging.log4j.core.config.Configurator
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
+import org.bukkit.event.HandlerList
 
 internal lateinit var plugin: JavaPlugin; private set
 internal lateinit var messages: Messages; private set
@@ -34,16 +35,19 @@ internal val subCommands: HashMap<String, SubCommand> = Commands.subCommands
 
 fun loadPlugin(internal: JavaPlugin) {
     plugin = internal
-
+    
+    if (::audiences.isInitialized) audiences.close()
     audiences = BukkitAudiences.create(internal)
     conversation = ConversationFactory(internal)
 
     config = config("config.toml")
     messages = Messages("messages.toml")
-
+    
     mainDB = database(config.database.tokens)
     playerDB = database(config.database.players)
-
+    
+    if (::apiServer.isInitialized) apiServer.stop(0, 0)
+    
     apiPort = config.api.port
     apiServer = startServer(apiPort)
 }
@@ -64,7 +68,11 @@ class Entry: JavaPlugin() {
     }
 
     override fun onDisable() {
-        apiServer.stop(0, 0)
+        HandlerList.unregisterAll(this)
+        
+        if (::apiServer.isInitialized) apiServer.stop(0, 0)
+        if (::audiences.isInitialized) audiences.close()
+        
         log.info("plugin disabled.")
     }
 }
