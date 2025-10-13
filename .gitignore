@@ -4,4 +4,4 @@ project/build
 build
 builds
 project-*
-server
+server/*
