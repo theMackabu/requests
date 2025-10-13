@@ -88,7 +88,7 @@ Returns the status of the Minecraft server.
 
 Returns a list of online players on the Minecraft server.
 
-#### GET `/player/<uniqueId>`
+#### GET `/players/<uniqueId>`
 
 Returns the information of a player.
 
