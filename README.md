@@ -12,7 +12,12 @@ Requests is a PaperMC plugin that provides a RESTful API for Minecraft servers. 
 
 ## Installation
 
-1. Download the latest version of the plugin from the [releases page](https://github.com/theMackabu/requests/releases) or from [spigotmc.org](https://no-url-yet.com).
+1. Download the latest version of the plugin from:
+   - [releases page](https://github.com/theMackabu/requests/releases)
+   - [spigotmc.org](https://www.spigotmc.org/resources/requests.129472/)
+   - [builtbybit.com](https://builtbybit.com/resources/requests.28600/)
+   - [papermc.io](https://hangar.papermc.io/theMackabu/Requests)
+
 2. Place the downloaded JAR file into the `plugins` folder of your server.
 3. Restart the server.
 
@@ -113,7 +118,7 @@ To build Requests from source, follow these steps:
 
 1. Clone the repository: `git clone https://github.com/theMackabu/requests.git`
 2. Navigate to the cloned repository: `cd requests`
-3. Build the plugin using Gradle: `./gradlew shadowJar`
+3. Build the plugin using [Maid](https://github.com/exact-labs/maid): `maid build`
 4. The built JAR file will be located at `build/libs/requests-<version>-all.jar`.
 
 ## License
