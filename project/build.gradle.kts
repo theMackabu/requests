@@ -48,16 +48,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
     
-    // implementation("io.ktor:ktor-server-content-negotiation-jvm:2.3.0")
-    // implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.0")
-    // implementation("io.ktor:ktor-server-core-jvm:2.3.0")
-    // implementation("io.ktor:ktor-server-double-receive-jvm:2.3.0")
-    // implementation("io.ktor:ktor-server-cors-jvm:2.3.0")
-    // implementation("io.ktor:ktor-server-netty-jvm:2.3.0")
-    // implementation("io.ktor:ktor-server-auth-jvm:2.3.0")
-    // implementation("io.ktor:ktor-server-status-pages-jvm:2.3.0")
-    // implementation("io.ktor:ktor-server-default-headers-jvm:2.3.0")
-    
     implementation("io.ktor:ktor-server-content-negotiation-jvm:3.3.1")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:3.3.1")
     implementation("io.ktor:ktor-server-core-jvm:3.3.1")
@@ -100,8 +90,6 @@ tasks.withType<Jar> {
 tasks.withType<ShadowJar> {
     archiveFileName.set("${rootProject.name}-${project.version}-all.jar")
     
-    relocate("kotlin", "dev.themackabu.requests.shaded.kotlin")
-    relocate("kotlinx", "dev.themackabu.requests.shaded.kotlinx")
     relocate("io.ktor", "dev.themackabu.requests.shaded.ktor")
     relocate("com.aventrix.jnanoid", "dev.themackabu.requests.shaded.jnanoid")
     relocate("com.github.adrielcafe.satchel", "dev.themackabu.requests.shaded.satchel")

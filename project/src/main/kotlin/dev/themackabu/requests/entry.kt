@@ -33,38 +33,29 @@ internal val server = Bukkit.getServer()
 internal val subCommands: HashMap<String, SubCommand> = Commands.subCommands
 
 fun loadPlugin(internal: JavaPlugin) {
-    /* JavaPlugin */
     plugin = internal
 
-    /* messaging */
     audiences = BukkitAudiences.create(internal)
     conversation = ConversationFactory(internal)
 
-    /* config */
     config = config("config.toml")
     messages = Messages("messages.toml")
 
-    /* database */
     mainDB = database(if (config.database["tokens"] != null) config.database["tokens"] as String else "tokens.db")
     playerDB = database(if (config.database["players"] != null) config.database["players"] as String else "players.db")
 
-    /* api server */
     apiPort = if (config.database["port"] != null) (config.api["port"] as String).toInt() else 5000
     apiServer = startServer(apiPort)
 }
 
 class Entry: JavaPlugin() {
     override fun onEnable() {
-        /* disable ktor.logger */
-        Configurator.setLevel("ktor.application", Level.OFF)
-
-        /* main services */
+        Configurator.setLevel("dev.themackabu.requests.shaded.ktor.application", Level.OFF)
+        Configurator.setLevel("dev.themackabu.requests.shaded.ktor.server", Level.OFF)
+        
         loadPlugin(this)
-
-        /* init token DB */
         mainDB["token."] = ""
 
-        /* register commands */
         this.getCommand("api")?.setExecutor(Commands())
         this.getCommand("api")?.tabCompleter = Commands()
         server.pluginManager.registerEvents(dataListener(), this)
@@ -73,7 +64,6 @@ class Entry: JavaPlugin() {
     }
 
     override fun onDisable() {
-        /* stop api server */
         apiServer.stop(0, 0)
         log.info("plugin disabled.")
     }
