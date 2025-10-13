@@ -1,23 +1,68 @@
 package dev.themackabu.requests.api.routes
 
+import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
+import io.ktor.server.response.*
 import dev.themackabu.requests.config
 import dev.themackabu.requests.server
 import dev.themackabu.requests.helpers.fromJson
 import io.ktor.server.application.ApplicationCall
 import dev.themackabu.requests.models.api.ApiException
 import dev.themackabu.requests.models.cmd.ResponseContext
-import dev.themackabu.requests.models.api.AuthenticatedResponse
-import kotlinx.serialization.Serializable
+import org.bukkit.Bukkit
+import org.bukkit.command.CommandSender
+import org.bukkit.craftbukkit.CraftServer
+import org.bukkit.craftbukkit.command.ProxiedNativeCommandSender
+import net.minecraft.commands.CommandSource
+import net.minecraft.commands.CommandSourceStack
+import net.minecraft.network.chat.Component as MinecraftComponent
 
-@Serializable
-data class CommandResult(
-    val executed: Boolean,
-    val command: String
-)
+class InterceptingCommandSource(
+    private val original: CommandSource,
+    private val messages: MutableList<String>
+): CommandSource {
+    override fun sendSystemMessage(component: MinecraftComponent) {
+        messages.add(component.string)
+        original.sendSystemMessage(component)
+    }
+    
+    override fun acceptsSuccess(): Boolean = original.acceptsSuccess()
+    
+    override fun acceptsFailure(): Boolean = original.acceptsFailure()
+    
+    override fun shouldInformAdmins(): Boolean = original.shouldInformAdmins()
+    
+    override fun getBukkitSender(commandSourceStack: CommandSourceStack): CommandSender {
+        return original.getBukkitSender(commandSourceStack)
+    }
+}
 
-suspend fun executeCommand(call: ApplicationCall): AuthenticatedResponse<CommandResult> {
+class NMSCommandResult private constructor(
+    sourceStack: CommandSourceStack,
+    caller: CommandSender,
+    callee: CommandSender,
+    private val capturedMessages: MutableList<String>
+): ProxiedNativeCommandSender(sourceStack, caller, callee) {
+    fun getOutput(): String = capturedMessages.joinToString("\n")
+    
+    companion object {
+        fun create(): NMSCommandResult {
+            val craftServer = Bukkit.getServer() as CraftServer
+            val nmsServer = craftServer.server
+            val originalStack = nmsServer.createCommandSourceStack()
+            val console = Bukkit.getConsoleSender()
+            
+            val messages = mutableListOf<String>()
+            val interceptingSource = InterceptingCommandSource(originalStack.source, messages)
+            val newStack = originalStack.withSource(interceptingSource)
+            
+            return NMSCommandResult(newStack, console, console, messages)
+        }
+    }
+}
+
+suspend fun executeCommand(call: ApplicationCall) {
     val info = call.principal<UserIdPrincipal>()!!.name
     val context = info.fromJson<ResponseContext>()
     
@@ -44,18 +89,25 @@ suspend fun executeCommand(call: ApplicationCall): AuthenticatedResponse<Command
         )
     }
     
-    val future = server.scheduler.callSyncMethod(dev.themackabu.requests.plugin) {
-        server.dispatchCommand(server.consoleSender, command)
-    }
+    try {
+        val commandResult = NMSCommandResult.create()
     
-    val executed = future.get()
-    
-    return AuthenticatedResponse(
-        code = 200,
-        response = info.fromJson<ResponseContext>(),
-        data = CommandResult(
-            executed = executed,
-            command = command
+        val future = server.scheduler.callSyncMethod(dev.themackabu.requests.plugin) {
+            server.dispatchCommand(commandResult, command)
+        }
+        
+        val executed = future.get()
+        val output = commandResult.getOutput().trim()
+        
+        call.respondText(
+            text = output,
+            contentType = ContentType.Text.Plain,
+            status = if (executed) HttpStatusCode.OK else HttpStatusCode.BadRequest
         )
-    )
+    } catch (e: Exception) {
+        throw ApiException(
+            message = "Failed to execute command: ${e.message}",
+            error = "command.execution_failed"
+        )
+    }
 }

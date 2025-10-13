@@ -12,7 +12,6 @@ script = "scripts/init.sh"
 [tasks.build]
 script = [
   "gradle build",
-  "rm -rf server/plugins/requests/",
   "cp project/build/libs/requests-%{env.PLUGIN_VERSION}-all.jar server/plugins",
   "bash -c \"sleep 1 && tmux send 'bukkit:reload confirm' ENTER;\""
 ]

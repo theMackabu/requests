@@ -15,8 +15,8 @@ data class Response(
 @Serializable(with = DataSerializer::class)
 data class AuthenticatedResponse<T>(
     val code: Int,
-    val response: ResponseContext,
-    val data: T
+    val response: ResponseContext? = null,
+    val data: T? = null
 )
 
 
@@ -27,11 +27,12 @@ class DataSerializer<T>(private val dataSerializer: KSerializer<T>): KSerializer
         element("data", dataSerializer.descriptor)
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun serialize(encoder: Encoder, value: AuthenticatedResponse<T>) {
         val compositeOutput = encoder.beginStructure(descriptor)
         compositeOutput.encodeIntElement(descriptor, 0, value.code)
-        compositeOutput.encodeSerializableElement(descriptor, 1, ResponseContext.serializer(), value.response)
-        compositeOutput.encodeSerializableElement(descriptor, 2, dataSerializer, value.data)
+        compositeOutput.encodeNullableSerializableElement(descriptor, 1, ResponseContext.serializer(), value.response)
+        compositeOutput.encodeNullableSerializableElement(descriptor, 2, dataSerializer, value.data)
         compositeOutput.endStructure(descriptor)
     }
 

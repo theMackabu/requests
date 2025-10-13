@@ -22,14 +22,14 @@ class GenerateMasterSubCommand: SubCommand(
         }
 
         val forceFlag = args.size > 1 && args[1] == "force"
-        val masterToken = nanoid(50, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+        val masterToken = nanoid(100, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
         val placeholders: HashMap<String, String> = hashMapOf("%token%" to masterToken)
         val message = messages.getMessage("commands", "console-generate-token", placeholders, addPrefix = false)
 
         mainDB.apply {
             when {
                 contains("token.master") && !forceFlag -> {
-                    messages.send(sender, "<red>A master token already exists. Use force to overwrite it.")
+                    messages.send(sender, "<red>A master token already exists. Use generate-master force to overwrite it.")
                 }
                 else -> {
                     messages.sendMessage(sender, message)
