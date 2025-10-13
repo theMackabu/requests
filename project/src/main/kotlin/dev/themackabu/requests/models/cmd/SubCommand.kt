@@ -7,7 +7,8 @@ abstract class SubCommand(
     var usage: String,
     var minArguments: Int,
     var executableByConsole: Boolean,
-    var neededPermission: String?
+    var neededPermission: String?,
+    var hideFromAutocomplete: Boolean = false
 ) {
     open fun getTabCompletions(sender: CommandSender, args: Array<out String>): MutableList<String> = ArrayList()
     abstract fun run(sender: CommandSender, args: Array<out String>)

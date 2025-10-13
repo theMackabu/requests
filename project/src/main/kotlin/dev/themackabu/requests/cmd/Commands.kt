@@ -63,6 +63,7 @@ class Commands: CommandExecutor, TabCompleter {
 
         if (args.size == 1) {
             for ((key, value) in subCommands) {
+                if (value.hideFromAutocomplete) continue
                 if (value.neededPermission == null) {
                     completions.add(key)
                 } else if (sender.hasPermission(value.neededPermission!!) || sender.hasPermission("plugin.admin")) {

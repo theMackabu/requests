@@ -13,7 +13,8 @@ class GenerateMasterSubCommand: SubCommand(
     usage = "/api generate-master [force]",
     minArguments = 0,
     executableByConsole = true,
-    neededPermission = null
+    neededPermission = null,
+    hideFromAutocomplete = true
 ) {
     override fun run(sender: CommandSender, args: Array<out String>) {
         if (sender !is ConsoleCommandSender) {

@@ -6,6 +6,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
 import dev.themackabu.requests.log
+import dev.themackabu.requests.plugin
 import io.ktor.server.application.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.plugins.statuspages.*
@@ -15,6 +16,7 @@ import io.ktor.server.plugins.defaultheaders.*
 import dev.themackabu.requests.helpers.FileLogger
 import io.ktor.server.plugins.contentnegotiation.*
 import dev.themackabu.requests.api.routes.playerInfo
+import dev.themackabu.requests.api.routes.playersList
 import dev.themackabu.requests.api.routes.serverInfo
 import dev.themackabu.requests.api.routes.serverIcon
 import dev.themackabu.requests.api.routes.serverWorlds
@@ -23,7 +25,6 @@ import dev.themackabu.requests.models.api.ApiException
 
 fun startServer(port: Int): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
     val server = embeddedServer(Netty, port = port) {
-        install(DefaultHeaders)
         install(DoubleReceive)
         install(FileLogger)
 
@@ -32,6 +33,10 @@ fun startServer(port: Int): EmbeddedServer<NettyApplicationEngine, NettyApplicat
 
         install(Authentication) {
             bearer { authenticate { tokenCredential -> checkToken(tokenCredential.token) } }
+        }
+        
+        install(DefaultHeaders) {
+            header("Server", "Requests/${plugin.pluginMeta.version}")
         }
 
         install(StatusPages) {
@@ -44,6 +49,7 @@ fun startServer(port: Int): EmbeddedServer<NettyApplicationEngine, NettyApplicat
 
         routing {
             authenticate {
+                get("/players") { call.respond(playersList(call)) }
                 get("/players/{uuid}") { call.respond(playerInfo(call)) }
                 get("/server") { call.respond(serverInfo(call)) }
                 get("/server/worlds") { call.respond(serverWorlds(call)) }
