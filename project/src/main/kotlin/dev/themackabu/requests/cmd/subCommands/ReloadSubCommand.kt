@@ -13,12 +13,10 @@ class ReloadSubCommand: SubCommand(
     usage = "/api reload",
     minArguments = 0,
     executableByConsole  = true,
-    neededPermission ="requests.reload"
+    neededPermission = "requests.reload"
 ) {
     override fun run(sender: CommandSender, args: Array<out String>) {
-        apiServer.stop(0, 0)
-        loadPlugin(plugin)
-
+        (plugin as dev.themackabu.requests.Entry).reload()
         messages.sendMessage(sender, messages.getMessage("commands", "reload-successful", null, true))
     }
 }

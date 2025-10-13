@@ -10,8 +10,12 @@ JDK_FLAGS = "--add-modules=jdk.incubator.vector -XX:+UseG1GC -XX:+ParallelRefPro
 script = "scripts/init.sh"
 
 [tasks.build]
-script = ["gradle build", "cp project/build/libs/requests-%{env.PLUGIN_VERSION}-all.jar server/plugins"]
+script = [
+  "gradle build",
+  "cp project/build/libs/requests-%{env.PLUGIN_VERSION}-all.jar server/plugins",
+  "bash -c \"sleep 0.5 && tmux send 'bukkit:reload confirm' ENTER;\""
+]
 
 [tasks.start]
 path = "server"
-script = ["zsh -c 'java -Xms4096M -Xmx4096M %{env.JDK_FLAGS} -jar paper.jar --nogui'"]
+script = ["tmux new-session -d -s mc_server_testing 'java -Xms4096M -Xmx4096M %{env.JDK_FLAGS} -jar paper.jar --nogui'", "tmux a"]

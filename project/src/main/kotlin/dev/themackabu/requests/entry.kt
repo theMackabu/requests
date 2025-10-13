@@ -4,11 +4,12 @@ import dev.themackabu.requests.cmd.Commands
 import dev.themackabu.requests.helpers.Logger
 import dev.themackabu.requests.api.startServer
 import dev.themackabu.requests.helpers.Messages
+import dev.themackabu.requests.helpers.player.*
 import dev.themackabu.requests.models.config.Config
 import dev.themackabu.requests.models.cmd.SubCommand
-import dev.themackabu.requests.helpers.player.dataListener
 
 import org.bukkit.Bukkit
+import org.bukkit.event.HandlerList
 import org.apache.logging.log4j.Level
 import org.bukkit.plugin.java.JavaPlugin
 import cafe.adriel.satchel.SatchelStorage
@@ -17,7 +18,6 @@ import io.ktor.server.netty.NettyApplicationEngine
 import org.bukkit.conversations.ConversationFactory
 import org.apache.logging.log4j.core.config.Configurator
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
-import org.bukkit.event.HandlerList
 
 internal lateinit var plugin: JavaPlugin; private set
 internal lateinit var messages: Messages; private set
@@ -74,5 +74,16 @@ class Entry: JavaPlugin() {
         if (::audiences.isInitialized) audiences.close()
         
         log.info("plugin disabled.")
+    }
+    
+    fun reload() {
+        if (::apiServer.isInitialized) apiServer.stop(0, 0)
+        HandlerList.unregisterAll(this)
+        
+        clearDebounce()
+        loadPlugin(this)
+        
+        server.pluginManager.registerEvents(dataListener(), this)
+        log.info("plugin reloaded.")
     }
 }

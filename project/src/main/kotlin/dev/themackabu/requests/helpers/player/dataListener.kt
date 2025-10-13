@@ -23,6 +23,11 @@ import dev.themackabu.requests.models.api.PlayerHealth
 
 private val debouncePlayer = mutableMapOf<UUID, BukkitTask?>()
 
+fun clearDebounce() {
+    debouncePlayer.values.forEach { it?.cancel() }
+    debouncePlayer.clear()
+}
+
 fun updatePlayer(player: Player) {
     val uuid = player.uniqueId.toString()
     val maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value
