@@ -10,6 +10,12 @@ Requests is a PaperMC plugin that provides a RESTful API for Minecraft servers. 
 - Authenticate requests using API keys
 - Easy to use and integrate
 
+## Requirements
+
+- Java 21 or higher
+- Minecraft 1.21.x
+- PaperMC or compatible server
+
 ## Installation
 
 1. Download the latest version of the plugin from:
@@ -27,7 +33,7 @@ Requests exposes a RESTful API that can be accessed using HTTP requests. The bas
 
 ```toml
 [plugin]
-salt = "change this"
+salt = "change this"  # Used for token generation - change for security
 prefix = "<light_purple>[requests]<reset> "
 
 [database]
@@ -36,13 +42,18 @@ players = "players.db"
 
 [api]
 port = 5000
-vault = false
-luckperms = false
+vault = false       # Enable Vault integration for economy data
+luckperms = false   # Enable LuckPerms integration for permission data
 ```
 
 ### Authentication
 
-Requests uses API keys to authenticate requests. To generate an master API key, use the following command in the server console:
+Requests uses API keys to authenticate requests. There are two types of tokens:
+
+- **Master tokens**: Full access to all endpoints including admin operations (e.g., `/command`)
+- **Player tokens**: Limited access to player-specific endpoints
+
+To generate a master API key, use the following command in the server console:
 
 ```bash
 /api generate-key <name>
@@ -50,7 +61,7 @@ Requests uses API keys to authenticate requests. To generate an master API key, 
 
 The `<name>` parameter is optional and can be used to give the key a custom name. The generated API key will be displayed in the console.
 
-To generate an player API key, use the following command in game:
+To generate a player API key, use the following command in game:
 
 ```
 /api token new
@@ -78,16 +89,20 @@ Returns a list of online players on the Minecraft server.
 
 Returns the information of a player.
 
+#### GET `/worlds`
+
+Returns a list of worlds on the Minecraft server.
+
 #### POST `/command`
 
-Sends a command to the Minecraft server. This route can be used by admin token only, and is disabled by default.
+Sends a command to the Minecraft server. This route can be used by master tokens only, and is disabled by default.
 
 ### Example Requests
 
 #### Get server status
 
 ```bash
-GET /server HTTP/.1
+GET /server HTTP/1.1
 Authorization: Bearer <api_key>
 User-Agent: Example Agent/0.0.1
 ```
